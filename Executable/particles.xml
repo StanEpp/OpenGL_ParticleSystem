@@ -1,0 +1,22 @@
+
+<root>
+
+  <Camera>
+    <rotation_velocity type="float">60.5</rotation_velocity>
+    <translation_velocity type="float">80</translation_velocity>
+  </Camera>
+
+  <Particles>
+    <iniRadius type="int">25</iniRadius>
+    <maxParticles type="int">500000</maxParticles>
+    <quadLength type="float">0.00999999978</quadLength>
+  </Particles>
+
+  <Window>
+    <height type="int">768</height>
+    <maxFPS type="int">60</maxFPS>
+    <width type="int">1024</width>
+    <windowed type="bool">1</windowed>
+  </Window>
+
+</root>
