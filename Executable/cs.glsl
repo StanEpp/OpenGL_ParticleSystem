@@ -35,10 +35,10 @@ void main(){
 		part.currPos 	= tempCurrPos;
 		
 		//Keep the particles inside the sphere
-		if(length(part.currPos.xyz) > 100){
-			vec4 norm = vec4(normalize(part.currPos.xyz), 0.0f);
-			part.currPos.xyz = norm.xyz*100;
-		}
+		//if(length(part.currPos.xyz) > 100){
+		//	vec4 norm = vec4(normalize(part.currPos.xyz), 0.0f);
+		//	part.currPos.xyz = norm.xyz*100;
+		//}
 		
 		p[gid] = part;
 
