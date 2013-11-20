@@ -21,5 +21,8 @@ The XML parser is written by myself and uses the xerces library.
 
 When you got questions regarding this particle system then you may contact me on youtube.
 
+[LICENSE]
+You can use this code as you like for every purpose. It would be kind to mention my name "Stanislaw Eppinger" when you use the code. =)
+
 
 Thank you for downloading this humble project! :) 
