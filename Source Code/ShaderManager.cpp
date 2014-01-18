@@ -28,13 +28,14 @@ void ShaderManager::loadShader(const char* filepath, std::string shaderKey, GLen
 			_shaderData->deleteShader(shaderKey);
 		}
 
-		GLsizei* length = new GLsizei;
-		glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, length); //Get the length of the compilation log
-		char* compilationLog = new char[*length];			 //Create the needed char array
+		GLsizei length;
+		glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &length); //Get the length of the compilation log
+		char* compilationLog = new char[length];			 //Create the needed char array
+		glGetShaderInfoLog(shaderID, length, NULL, compilationLog); //Get the compilation log
+		std::string compilationLogString(compilationLog); //Create string for the compilation log
+		delete compilationLog;
 
-		glGetShaderInfoLog(shaderID, *length, NULL, compilationLog); //Get the compilation log
-
-		throw std::exception(("ERROR: \nCompilation log of shader "+shaderKey+":\n"+std::string(compilationLog)).c_str());
+		throw std::exception(("ERROR: \nCompilation log of shader "+shaderKey+":\n"+compilationLogString).c_str());
 	}
 	
 	
