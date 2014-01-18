@@ -33,7 +33,7 @@ void ShaderManager::loadShader(const char* filepath, std::string shaderKey, GLen
 		char* compilationLog = new char[length];			 //Create the needed char array
 		glGetShaderInfoLog(shaderID, length, NULL, compilationLog); //Get the compilation log
 		std::string compilationLogString(compilationLog); //Create string for the compilation log
-		delete compilationLog;
+		delete[] compilationLog;
 
 		throw std::exception(("ERROR: \nCompilation log of shader "+shaderKey+":\n"+compilationLogString).c_str());
 	}
@@ -138,7 +138,7 @@ void ShaderManager::linkProgram(std::string shaderProgramKey){
 		char* linkingLog = new char[length];			 //Create the needed char array
 		glGetProgramInfoLog(shaderProgramID, length, NULL, linkingLog); //Get the compilation log
 		std::string linkingLogString(linkingLog);		//Save the compilation log in a string
-		delete linkingLog;	//Free the allocated memory
+		delete[] linkingLog;	//Free the allocated memory
 
 		throw std::exception(("ERROR: \nLinker log of shader-programm "+shaderProgramKey+":\n"+linkingLogString).c_str());
 
