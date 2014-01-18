@@ -131,13 +131,15 @@ void ShaderManager::linkProgram(std::string shaderProgramKey){
 
 	if(glGetError() != GL_NO_ERROR || linkStatus == GL_FALSE){
 
-		GLsizei* length = new GLsizei;
-		glGetProgramiv(shaderProgramID, GL_INFO_LOG_LENGTH, length); //Get the length of the compilation log
-		char* linkingLog = new char[*length];			 //Create the needed char array
+		GLsizei length;
+		glGetProgramiv(shaderProgramID, GL_INFO_LOG_LENGTH, &length); //Get the length of the compilation log
+		
+		char* linkingLog = new char[length];			 //Create the needed char array
+		glGetProgramInfoLog(shaderProgramID, length, NULL, linkingLog); //Get the compilation log
+		std::string linkingLogString(linkingLog);		//Save the compilation log in a string
+		delete linkingLog;	//Free the allocated memory
 
-		glGetProgramInfoLog(shaderProgramID, *length, NULL, linkingLog); //Get the compilation log
-
-		throw std::exception(("ERROR: \nLinker log of shader-programm "+shaderProgramKey+":\n"+std::string(linkingLog)).c_str());
+		throw std::exception(("ERROR: \nLinker log of shader-programm "+shaderProgramKey+":\n"+linkingLogString).c_str());
 
 	}
 }
