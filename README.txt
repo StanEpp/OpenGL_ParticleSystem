@@ -1,17 +1,22 @@
+[KEYS]
+W, A, S, D - Moving the camera
+Left mouse button - Activating the attractor mode (Camera does not move anymore)
+Right mouse button - Activating the attractor as the source of gravity
+UP, DOWN - Adjusting the attractor's depth
+
 [USED LIBRARIES]
 
 This particle system uses the following libraries:
-Glew 1.9.0
-GLFW 2.7.6
-GLM 0.9.34
+Glew 1.11.0
+GLFW 3.0.4
+GLM 0.9.5.4
 xerces-c-3.1.1
-boost 1.50.0
+boost 1.56.0
 
 [PROBLEMS AND ERRORS]
 
 If no GLFW window can be created nor an OpenGL context then make sure you have got the latest graphics driver which supports OpenGL 4.3. 
 If you got some trouble with the xml document then just delete it. A new document will be created with default values during the next execution.
-
 
 [COMMENT]
 
