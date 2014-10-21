@@ -13,8 +13,7 @@ uniform float 	quadLength;
 
 void main(void){
 
-	vec4 normal = gl_PositionIn[0] - camPos;
-	normal = normalize(viewMatrix*normal);
+	vec4 normal = normalize(viewMatrix*gl_PositionIn[0] - camPos);
 	
 	vec3 rightAxis 	= cross(normal.xyz, vec3(0,1,0));
 	vec3 upAxis 	= cross(rightAxis, normal.xyz);
