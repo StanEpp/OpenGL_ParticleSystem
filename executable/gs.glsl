@@ -22,19 +22,23 @@ void main(void){
 	vec4 upVector 		= projMatrix*vec4(upAxis.xyz, 1.0f)*(quadLength*0.5f);
 	vec4 particlePos	= projMatrix*viewMatrix*gl_PositionIn[0];
 
-  	gl_Position = particlePos-rightVector-upVector;
-  	ex_TexCoor = vec2(0,0);
-  	EmitVertex();
+  gl_Position = particlePos-rightVector-upVector;
+  ex_TexCoor = vec2(0,0);
+  EmitVertex();
 	
 	gl_Position = particlePos+rightVector-upVector;
+  gl_Position.x += 0.5;
 	ex_TexCoor = vec2(1,0);
 	EmitVertex();
 	
 	gl_Position = particlePos-rightVector+upVector;
+  gl_Position.y += 0.5;
 	ex_TexCoor = vec2(0,1);
 	EmitVertex();
 	
 	gl_Position = particlePos+rightVector+upVector;
+  gl_Position.y += 0.5;
+	gl_Position.x += 0.5;
 	ex_TexCoor = vec2(1,1);
 	EmitVertex();
 	
