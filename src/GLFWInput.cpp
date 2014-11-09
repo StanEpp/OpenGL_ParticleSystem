@@ -1,6 +1,4 @@
 #include "GLFWInput.h"
-#include <stdlib.h>
-#include <iostream>
 
 GLFWInput::GLFWInput() : _xpos(0), _ypos(0){
 	_mouseButtonPressed[0] = _mouseButtonPressed[1] = _mouseButtonPressed[2] = false;
