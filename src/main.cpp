@@ -18,16 +18,15 @@ void loadDefaultValues(XMLParser* xml);
 
 int main(){
 
-	XMLParser* xml = new XMLParser();
+	std::auto_ptr<XMLParser> xml(new XMLParser());
 
 	try{
 		xml->loadXML(".\\particles.xml");
-
 	} catch(std::exception& e){
 		std::cout << e.what() <<std::endl;
 		std::cout << "Default values will be applied!" <<std::endl;
-		
-		loadDefaultValues(xml);
+
+		loadDefaultValues(xml.get());
 
 		try{
 			xml->writeToXML(".\\particles.xml");
@@ -36,7 +35,6 @@ int main(){
 		}
 	}
 
-	
 	GLFWWindow* wnd;
 
 	try{
@@ -49,18 +47,15 @@ int main(){
 		std::cout << e.what() <<std::endl;
 		std::cin.get();
 
-		delete xml;
-
 		return -1;
 	}
-	
+
 	glewExperimental = GL_TRUE;
 	if(glewInit() != GLEW_OK){
 		std::cout << "Could not initialize GLEW!" <<std::endl;
 		std::cin.get();
 
 		delete wnd;
-		delete xml;
 
 		return -1;
 	} else {
@@ -84,19 +79,18 @@ int main(){
 		std::cin.get();
 
 		delete wnd;
-		delete xml;
 
 		return -1;
 	}
-	
-	delete xml;
-	
-	
 
 	try{
+		std::cout << "Executing Particle System" <<std::endl;
 		ps->run(wnd);
 	} catch(std::exception& e){
 		std::cout << e.what() <<std::endl;
+		std::cin.get();
+	} catch(...){
+		std::cout << "FATAL ERROR occured during execution of the particle system!" <<std::endl;
 		std::cin.get();
 	}
 
@@ -111,11 +105,11 @@ void loadDefaultValues(XMLParser* xml){
 	xml->add("Window", "height", 768);
 	xml->add("Window", "windowed", true);
 	xml->add("Window", "maxFPS", 60);
-	
+
 	xml->add("Particles", "maxParticles", 1000);
 	xml->add("Particles", "quadLength", 0.01f);
 	xml->add("Particles", "iniRadius", 15);
-	
+
 	xml->add("Camera", "translation_velocity", 100.0f);
 	xml->add("Camera", "rotation_velocity", 100.0f);
 }

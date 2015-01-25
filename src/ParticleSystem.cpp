@@ -1,25 +1,24 @@
 #include "ParticleSystem.h"
 
 ParticleSystem::ParticleSystem(int numParticles, int iniRadius, float quadLength, int maxFPS, float velocityTranslate, float velocityRotate) :
+	_camera(new Camera<glm::mat4, glm::vec4, float>(new FPCamera())),
+	_input(new GLFWInput()),
+	_attractor(new Attractor<glm::mat4, glm::vec4, float>(nullptr)),
+	_particleManager(new ParticleManager()),
+	_particleTexture(new ParticleTexture()),
 	_numParticles(numParticles),
-	_quadLength(quadLength),
 	_iniRadius(iniRadius),
 	_maxFPS(maxFPS),
+	_quadLength(quadLength),
 	_velocityTranslate(velocityTranslate),
 	_velocityRotate(velocityRotate),
 	_useGravity(false),
-	_camera(new Camera<glm::mat4, glm::vec4, float>(new FPCamera())),
-	_input(new GLFWInput()),
-	_attractor(new Attractor<glm::mat4, glm::vec4, float>(NULL)),
-	_particleManager(new ParticleManager()),
-	_particleTexture(new ParticleTexture()),
+	_showFPS(false),
 	_shaderManager(ShaderManager::getInstance())
-	{
-	
-	}
+	{}
 
 ParticleSystem::~ParticleSystem(){
-		deleteParticleSystem();
+	deleteParticleSystem();
 }
 
 void ParticleSystem::initialize(int width, int height){
@@ -55,7 +54,7 @@ void ParticleSystem::initialize(int width, int height){
 
 	_projectionMatrix = glm::perspective(45.0f, (float)width/(float)height, 1.f, 1000.0f);
 
-	boost::shared_ptr<RayCastAttractorUpdate> attUpdate(new RayCastAttractorUpdate());
+	std::shared_ptr<RayCastAttractorUpdate> attUpdate(new RayCastAttractorUpdate());
 	attUpdate->initAttractor(width, height, 45.0f, 1.f);
 	_attractor->setUpdateStrategy(attUpdate);
 
@@ -79,8 +78,8 @@ void ParticleSystem::run(GLFWWindow* wnd){
 
 	bool running = true;
 
-	int count = 0, frameCounter = 0, fps = 0;
-	double frameTimeDiff, time;
+	int frameCounter = 0, fps = 0;
+	double frameTimeDiff;
 
 	GLFWTimer fpsTimer;
 
@@ -253,16 +252,16 @@ void ParticleSystem::input(double frameTimeDiff, GLFWWindow* wnd){
 	_input->updateInput(glfwnd);
 }
 
-void ParticleSystem::deleteParticleSystem(){
+void ParticleSystem::deleteParticleSystem() noexcept{
 	glUseProgram(0);
 
 	try{
 		_shaderManager->deleteProgram("shaderProg");
 		_shaderManager->deleteProgram("computeProg");
-	}catch(std::exception& e){
+	} catch(std::exception& e){
 		std::cout << e.what() <<std::endl;
+	} catch(...){
+		std::cout << "ERROR while deleting particle system!" <<std::endl;
 	}
 
 }
-
-

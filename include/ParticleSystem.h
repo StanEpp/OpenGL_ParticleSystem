@@ -17,7 +17,7 @@
 #include <glm\gtc\matrix_access.hpp>
 #include <glm\gtc\type_ptr.hpp>
 
-#include <boost\shared_ptr.hpp>
+#include <memory>
 #include <boost\lexical_cast.hpp>
 
 #include "Classes.h"
@@ -41,23 +41,23 @@ struct Vertex{
 
 class ParticleSystem{
 private:
-	boost::shared_ptr<Camera<glm::mat4, glm::vec4, float> >			_camera;
-	boost::shared_ptr<GLFWInput>																_input;
-	boost::shared_ptr<Attractor<glm::mat4, glm::vec4, float> >	_attractor;
-	boost::shared_ptr<ParticleManager>													_particleManager;
-	boost::shared_ptr<ParticleTexture>													_particleTexture;
-	ShaderManager*						_shaderManager;
-	glm::mat4									_projectionMatrix;
-	int												_numParticles, _iniRadius, _maxFPS;
-	float											_quadLength, _velocityTranslate, _velocityRotate;
-	bool											_useGravity, _showFPS;
+	std::shared_ptr<Camera<glm::mat4, glm::vec4, float> >	_camera;
+	std::shared_ptr<GLFWInput>	_input;
+	std::shared_ptr<Attractor<glm::mat4, glm::vec4, float> >	_attractor;
+	std::shared_ptr<ParticleManager>	_particleManager;
+	std::shared_ptr<ParticleTexture>	_particleTexture;
+	glm::mat4	_projectionMatrix;
+	int	_numParticles, _iniRadius, _maxFPS;
+	float	_quadLength, _velocityTranslate, _velocityRotate;
+	bool	_useGravity, _showFPS;
+
+	ShaderManager*	_shaderManager;
 
 	void initialize(int width, int height);
 	void render(double frameTimeDiff, double time);
 	void input(double frameTimeDiff, GLFWWindow* wnd);
-	void deleteParticleSystem();
-	
-	
+	void deleteParticleSystem() noexcept;
+
 	GLuint	_vertexUVBufferID;
 	GLuint 	_VertexArrayID;
 public:
@@ -69,7 +69,6 @@ public:
 
 
 };
-
 
 
 #endif

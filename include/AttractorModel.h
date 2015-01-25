@@ -8,28 +8,22 @@ private:
 	float 	_attDepth; //The z-Coordinate of the attractor
 	
 public:
-	AttractorModel() : _position(){}
-	~AttractorModel(){}
 
-	//AttractorModel(Value x, Value y, Value z);
+	AttractorModel() = default;
 
-	AttractorModel(Vector position){
-		_position = position;
-	}
+	AttractorModel(const Vector& position) : 
+		_position(position) {}
 
-	Vector	getPosition(){
+	Vector	getPosition() const{
 		return _position;
 	}
 
 	//Override me
-	//virtual void setPosition(Value x, Value y, Value z) = 0;
-
-	//Override me
-	virtual void setPosition(Vector position){
+	virtual void setPosition(const Vector& position){
 		_position = position;
 	}
-	
-	void incrementDepth(float inc){
+
+	void incrementDepth(const float inc){
 		_attDepth += inc;
 		if(_attDepth < 0){
 			_attDepth = 0;
@@ -37,8 +31,8 @@ public:
 			_attDepth = 1000;
 		}
 	}
-	
-	float getDepth(){
+
+	float getDepth() const{
 		return _attDepth;
 	}
 

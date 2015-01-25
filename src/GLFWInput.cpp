@@ -1,12 +1,7 @@
 #include "GLFWInput.h"
 
-GLFWInput::GLFWInput() : _xpos(0), _ypos(0){
-	_mouseButtonPressed[0] = _mouseButtonPressed[1] = _mouseButtonPressed[2] = false;
-}
-
-GLFWInput::~GLFWInput(){
-
-}
+GLFWInput::GLFWInput() : 
+	_xpos(0), _ypos(0), _mouseButtonPressed{false, false, false} {}
 
 void GLFWInput::updateInput(GLFWwindow* window){
 	glfwPollEvents();
@@ -29,11 +24,11 @@ bool GLFWInput::isKeyPressedOnce(int GLFW_Key, GLFWwindow* window){
 	}
 }
 
-bool GLFWInput::isKeyPressed(int GLFW_Key, GLFWwindow* window){
+bool GLFWInput::isKeyPressed(int GLFW_Key, GLFWwindow* window) const{
 	return (glfwGetKey(window, GLFW_Key) == GLFW_PRESS);
 }
 
-bool GLFWInput::isMouseButtonPressed(int GLFW_MouseButton, GLFWwindow* window){
+bool GLFWInput::isMouseButtonPressed(int GLFW_MouseButton, GLFWwindow* window) const{
 	return (glfwGetMouseButton(window, GLFW_MouseButton) == GLFW_PRESS);
 }
 
@@ -41,8 +36,8 @@ bool GLFWInput::isMouseButtonPressedOnce(int GLFW_MouseButton, GLFWwindow* windo
 	if(isMouseButtonPressed(GLFW_MouseButton, window)){
 
 		if(!_mouseButtonPressed[GLFW_MouseButton]){
-				_mouseButtonPressed[GLFW_MouseButton] = true;
-				return true;
+			_mouseButtonPressed[GLFW_MouseButton] = true;
+			return true;
 		} else {
 			return false;
 		}
@@ -53,15 +48,15 @@ bool GLFWInput::isMouseButtonPressedOnce(int GLFW_MouseButton, GLFWwindow* windo
 	}
 }
 
-double	GLFWInput::getXPos(){
+double	GLFWInput::getXPos() const{
 	return _xpos;
 }
 
-double GLFWInput::getYPos(){
+double GLFWInput::getYPos() const{
 	return _ypos;
 }
 
-double GLFWInput::getXPosDiff(GLFWwindow* window){
+double GLFWInput::getXPosDiff(GLFWwindow* window) const{
 	double xpos, ypos;
 
 	glfwGetCursorPos(window, &xpos, &ypos);
@@ -71,7 +66,7 @@ double GLFWInput::getXPosDiff(GLFWwindow* window){
 	return diff;
 }
 
-double GLFWInput::getYPosDiff(GLFWwindow* window){
+double GLFWInput::getYPosDiff(GLFWwindow* window) const{
 	double xpos, ypos;
 
 	glfwGetCursorPos(window, &xpos, &ypos);

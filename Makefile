@@ -13,7 +13,7 @@ CC=gcc
 AR=ar
 #GDB=-g
 
-CPPFLAGS=-std=c++11 -Iinclude/ -Wno-write-strings -s
+CPPFLAGS=-std=c++11 -Iinclude/ -Wall -s
 LFLAGS=-lglfw3 -lglew32 -lopengl32 -lgdi32 -lxerces-c -lstdc++
 
 all: src/main.cpp $(OBJECTS)
@@ -23,5 +23,5 @@ all: src/main.cpp $(OBJECTS)
 	$(CC) $(GDB) $(CPPFLAGS) -c $< -o $@
 	
 clean:
-	del $(subst /,\,$(OBJECTS))
-	del $(subst /,\,$(TARGETS))
+	rm $(subst /,\,$(OBJECTS))
+	rm $(subst /,\,$(TARGETS))

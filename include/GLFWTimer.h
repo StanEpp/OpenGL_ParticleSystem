@@ -6,19 +6,18 @@
 class GLFWTimer{
 private:
 	double		_time;
-	double		_oldTime;
+	mutable double	_oldTime;
 
 public:
 	GLFWTimer() : _time(0), _oldTime(0){}
-	~GLFWTimer(){}
 
 	//Receives time since glfwInit() call
-	double	getTime(){
+	double	getTime() const{
 		return _time + glfwGetTime();
-	}	
+	}
 
 	//Returns the time difference since the last getTimeDiff() call
-	double	getTimeDiff(){
+	double	getTimeDiff() const{
 		double currTime = getTime();
 		double timeDiff = currTime - _oldTime;
 		_oldTime = currTime;
@@ -27,7 +26,7 @@ public:
 	}
 
 	//Returns the time difference since the last getTimeDiff() call
-	double getTimeDiffWithoutActualization(){
+	double getTimeDiffWithoutActualization() const{
 		double currTime = getTime();
 		double timeDiff = currTime - _oldTime;
 		
@@ -35,7 +34,7 @@ public:
 	}
 
 	//Returns the time since the last resetTime() call
-	double	getRefreshedTime(){
+	double	getRefreshedTime() const{
 		return glfwGetTime();
 	}
 

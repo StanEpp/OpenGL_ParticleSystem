@@ -8,71 +8,64 @@
 #include <xercesc\sax\HandlerBase.hpp>
 
 #include <boost\any.hpp>
-#include <boost\shared_ptr.hpp>
-#include <boost\scoped_ptr.hpp>
 #include <boost\lexical_cast.hpp>
 
 #include <map>
 #include <string>
+#include <iostream>
 
 #include "InhomogenousContainer.h"
 
-typedef boost::shared_ptr<InhomogenousContainer>	InHomoContainer;
-typedef std::map<std::string, InHomoContainer> 		categories;
+typedef InhomogenousContainer	InHomoContainer;
+typedef std::map<std::string, InHomoContainer>	categories;
 
 class XMLParser{
 private:
-	categories*	_categories;	//Contains the whole xml-tree
+	categories	_categories;	//Contains the whole xml-tree
 	std::string	_inputFile;		//The given path to the xml to load
-	std::string _outputFile;	//The given path to the xml to save
+	std::string	_outputFile;	//The given path to the xml to save
 
-	xercesc::XercesDOMParser* _parser;	//DOM Parser
+	xercesc::XercesDOMParser*	_parser;	//DOM Parser
 
 public:
 
-	XMLParser(std::string defaultInputFile, std::string defaultOutputFile){
-		_categories		= new categories();
-		_inputFile		= defaultInputFile;
-		_outputFile		= defaultOutputFile;	
+	XMLParser(const std::string &defaultInputFile, const std::string& defaultOutputFile) : 
+		_inputFile(defaultInputFile), _outputFile(defaultOutputFile){
 	}
 
-	XMLParser(){
-		_categories		= new categories();
-	}
+	XMLParser(){}
 
 	~XMLParser(){
-		_categories->clear();
-		delete _categories;
 		xercesc::XMLPlatformUtils::Terminate(); //Clean up the xerces lib
 	}
 
-	void add(std::string category, std::string key, boost::any value);
+	void add(const std::string& category, const  std::string& key, boost::any value);
 
-	void add(std::string categorie, std::string key, const char* value);
+	void add(const std::string& category, const std::string& key, const char* value);
 
 	/**Changes the value of a key. If the key is not existent, a new key will be 
 		created with the new value.
 	**/
-	void change(std::string category, std::string key, boost::any newValue);
+	void change(const std::string& category,const  std::string& key, boost::any newValue);
 
-	void change(std::string category, std::string key, const char* newValue);
+	void change(const std::string& category,const  std::string& key, const char* newValue);
 
 	/**returns the value of the given key in the given category and performs
 	    the particular typecast. The user is responsible for the right typecast. 
 	**/
 	template<typename T>
-	T get(std::string category, std::string key){
-		if(_categories->count(category) != 0){
-		 return (*_categories)[category]->get<T>(key);
+	T get(const std::string& category, const std::string& key){
+		if(_categories.count(category) != 0){
+			return _categories[category].get<T>(key);
 		} else {
 			throw std::logic_error(std::string("Category: ").append(category.c_str()).append(" not found!").c_str());
 		}
         
 	}
 
-	void writeToXML(std::string outputFile = "-1");
+	void writeToXML(const std::string& outputFile = "-1");
 
-	void loadXML(std::string inputFile = "-1");
+	void loadXML(const std::string& inputFile = "-1");
 
 private:
 

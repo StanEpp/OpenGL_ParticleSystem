@@ -12,25 +12,23 @@
 
 class GLFWInput{
 private:
-	double							_xpos, _ypos;							
+	mutable double	_xpos, _ypos;
 	std::map<int, int>	_keyPressed;
-	bool								_mouseButtonPressed[3];
+	bool	_mouseButtonPressed[3];
 
 public:
 	GLFWInput();
-	~GLFWInput();
 
 	void updateInput(GLFWwindow*);
 
-	bool isKeyPressed(int GLFW_Key, GLFWwindow*);
+	bool isKeyPressed(int GLFW_Key, GLFWwindow*) const;
+	bool isMouseButtonPressed(int GLFW_MouseButton, GLFWwindow*) const;
 	
-	bool isMouseButtonPressed(int GLFW_MouseButton, GLFWwindow*);
+	double getXPos() const;
+	double getYPos() const;
 	
-	double getXPos();
-	double getYPos();
-	
-	double getXPosDiff(GLFWwindow*);
-	double getYPosDiff(GLFWwindow*);
+	double getXPosDiff(GLFWwindow*) const;
+	double getYPosDiff(GLFWwindow*) const;
 	
 	bool isKeyPressedOnce(int GLFW_Key, GLFWwindow* window);
 	bool isMouseButtonPressedOnce(int GLFW_MouseButton, GLFWwindow* window);

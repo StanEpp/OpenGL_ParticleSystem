@@ -3,7 +3,7 @@
 
 #define GLM_FORCE_RADIANS
 
-#include <boost\shared_ptr.hpp>
+#include <memory>
 
 #include <glm\glm.hpp>
 
@@ -16,43 +16,36 @@
 template <class Matrix, class Vector, class Value>
 class Attractor{
 private:
-	boost::shared_ptr<IAttractorUpdate<Matrix, Vector, Value> >	_updateStrategy;
-	boost::shared_ptr<AttractorModel<Vector, Value> >						_attModel;
+	std::shared_ptr<IAttractorUpdate<Matrix, Vector, Value> >	_updateStrategy;
+	AttractorModel<Vector, Value>	_attModel;
 	
 public:
-	Attractor(IAttractorUpdate<Matrix, Vector, Value>* attUpdate) : _updateStrategy(attUpdate){
-		_attModel = boost::shared_ptr<AttractorModel<Vector, Value> >(new AttractorModel<Vector, Value>());
+	Attractor(IAttractorUpdate<Matrix, Vector, Value>* attUpdate) : 
+		_updateStrategy(attUpdate){
 	}
 
-	Attractor(IAttractorUpdate<Matrix, Vector, Value>* attUpdate, Value x, Value y, Value z) : _updateStrategy(attUpdate) {
-		_attModel = boost::shared_ptr<AttractorModel<Vector, Value> >(new AttractorModel<Vector, Value>(x, y, z));
+	Attractor(IAttractorUpdate<Matrix, Vector, Value>* attUpdate, const Vector& position) : 
+		_updateStrategy(attUpdate), _attModel(position) {
 	}
-
-	Attractor(IAttractorUpdate<Matrix, Vector, Value>* attUpdate, Vector position) : _updateStrategy(attUpdate) {
-		_attModel = boost::shared_ptr<AttractorModel<Vector, Value> >(new AttractorModel<Vector, Value>(position));
-	}
-
-	~Attractor(){}
 
 	void updateAttractor(Camera<Matrix, Vector, Value>* camera, GLFWInput* input){
-		_updateStrategy->updateAttractor(_attModel.get(), camera, input);
+		_updateStrategy->updateAttractor(&_attModel, camera, input);
 	}
 
-	void setUpdateStrategy(boost::shared_ptr<IAttractorUpdate<Matrix, Vector, Value> > attUpdate){
-		boost::shared_ptr<IAttractorUpdate<Matrix, Vector, Value> > ptr = boost::shared_ptr<IAttractorUpdate<Matrix, Vector, Value> >(attUpdate);
-		_updateStrategy.swap(ptr);
+	void setUpdateStrategy(std::shared_ptr<IAttractorUpdate<Matrix, Vector, Value>> attUpdate){
+		_updateStrategy.swap(attUpdate);
 	}
 
-	Vector getAttractorPos(){
-		return _attModel->getPosition();
+	Vector getAttractorPos() const{
+		return _attModel.getPosition();
 	}
 	
-	void incrementDepth(float inc){
-		_attModel->incrementDepth(inc);
+	void incrementDepth(const float inc){
+		_attModel.incrementDepth(inc);
 	}
 	
-	float getDepth(){
-		return _attModel->getDepth();
+	float getDepth() const{
+		return _attModel.getDepth();
 	}
 	
 };

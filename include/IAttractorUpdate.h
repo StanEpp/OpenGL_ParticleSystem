@@ -10,7 +10,7 @@ public:
 	~IAttractorUpdate(){}
 
 	//Override me
-	virtual void updateAttractor(AttractorModel<Vector, Value>* attModel, Camera<Matrix, Vector, Value>* camera, GLFWInput* Input) = 0;
+	virtual void updateAttractor(AttractorModel<Vector, Value>* attModel, const Camera<Matrix, Vector, Value>* camera, GLFWInput* Input) = 0;
 };
 
 

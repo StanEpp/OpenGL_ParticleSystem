@@ -4,37 +4,33 @@
 #ifndef _GLEW_
 #define _GLEW_
 	#include <GL\glew.h>
-	#include <GLFW\glfw3.h>
+	#include <GFWL\glfw3.h>
 #endif
-
 #include <map>
 #include <string>
-#include <boost\shared_ptr.hpp>
+#include <memory>
 
 class ShaderBaseModel{
 
 	friend class ShaderManager;
 
 private:
-	boost::shared_ptr<std::map<std::string, GLuint> >	_shader;
-	boost::shared_ptr<std::map<std::string, GLuint> >	_shaderProgram;
+	std::map<std::string, GLuint>	_shader;
+	std::map<std::string, GLuint>	_shaderProgram;
 
 	//May only be instantiated in ShaderManager
-	ShaderBaseModel() : _shader(new std::map<std::string, GLuint>()),
-						_shaderProgram(new std::map<std::string, GLuint>()) {}
-
-	~ShaderBaseModel(){
-		_shader->clear();
-		_shaderProgram->clear();
-	}
+	ShaderBaseModel() {}
 
 public:
+	~ShaderBaseModel(){
+	}
+	
 
 	/*Returns ShaderID with the associated Key. Returns 0 if Key does not exist. */
-	GLuint getShaderID(std::string ShaderKey){
-		std::map<std::string, GLuint>::iterator it = _shader->find(ShaderKey);
+	GLuint getShaderID(const std::string& ShaderKey){
+		std::map<std::string, GLuint>::iterator it = _shader.find(ShaderKey);
 
-		if(it == _shader->end()){
+		if(it == _shader.end()){
 			return 0;
 		} else {
 			return it->second;
@@ -43,10 +39,10 @@ public:
 	}
 
 	/*Returns ShaderID with the associated Key. Returns 0 if Key does not exist. */
-	GLuint getShaderProgramID(std::string ShaderProgramKey){
-		std::map<std::string, GLuint>::iterator it = _shaderProgram->find(ShaderProgramKey);
+	GLuint getShaderProgramID(const std::string& ShaderProgramKey){
+		std::map<std::string, GLuint>::iterator it = _shaderProgram.find(ShaderProgramKey);
 
-		if(it == _shaderProgram->end()){
+		if(it == _shaderProgram.end()){
 			return 0;
 		} else {
 			return it->second;
@@ -54,21 +50,21 @@ public:
 	}
 
 	/*Returns false, if element with the same key already exists, otherwise returns true */
-	bool saveShader(std::string ShaderKey, GLuint ShaderID){
-		return _shader->insert(std::pair<std::string, GLuint>(ShaderKey, ShaderID) ).second;	
+	bool saveShader(const std::string& ShaderKey,const GLuint ShaderID){
+		return _shader.insert(std::pair<std::string, GLuint>(ShaderKey, ShaderID) ).second;
 	}
 
 	/*Returns false, if element with the same key already exists, otherwise returns true */
-	bool saveShaderProgram(std::string ShaderProgramKey, GLuint ShaderProgramID){
-		return _shaderProgram->insert(std::pair<std::string, GLuint>(ShaderProgramKey, ShaderProgramID) ).second;
+	bool saveShaderProgram(const std::string& ShaderProgramKey, const GLuint ShaderProgramID){
+		return _shaderProgram.insert(std::pair<std::string, GLuint>(ShaderProgramKey, ShaderProgramID) ).second;
 	}
 
-	void deleteShader(std::string ShaderKey){
-		_shader->erase(ShaderKey);
+	void deleteShader(const std::string& ShaderKey){
+		_shader.erase(ShaderKey);
 	}
 
-	void deleteShaderProgram(std::string ShaderProgramKey){
-		_shaderProgram->erase(ShaderProgramKey);
+	void deleteShaderProgram(const std::string& ShaderProgramKey){
+		_shaderProgram.erase(ShaderProgramKey);
 	}
 
 };

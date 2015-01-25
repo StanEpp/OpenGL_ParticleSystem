@@ -8,7 +8,7 @@
 #endif
 
 #include <stdexcept>
-#include <cstring>
+#include <string>
 
 #include "tga.h"
 
@@ -20,13 +20,13 @@ private:
 	void deleteTexture();
 
 public:
-	ParticleTexture(){}
+
 	~ParticleTexture(){
 		deleteTexture();
 	}
 
-void loadTexture(const char* filepath);
-void useTexture(GLuint shaderProgramID);
+void loadTexture(const std::string& path);
+void useTexture(const GLuint shaderProgramID);
 
 };
 

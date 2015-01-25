@@ -22,7 +22,7 @@ void ParticleManager::loadParticleBuffer(int numParticles, int iniRadius){
 
 }
 
-void ParticleManager::setParticles(struct Particle* particles, int numParticles, int iniRadius){
+void ParticleManager::setParticles(Particle* particles, int numParticles, int iniRadius){
 	float rndX, rndY, rndZ;
 	std::mt19937 eng;
 	std::uniform_real_distribution<float> dist(static_cast<float>(iniRadius)*(-1.0f), static_cast<float>(iniRadius));
@@ -36,11 +36,11 @@ void ParticleManager::setParticles(struct Particle* particles, int numParticles,
 	}
 }
 
-GLuint ParticleManager::getParticleBufferID(){
+GLuint ParticleManager::getParticleBufferID() const{
 	return _bufferData.getBufferID("particleBuffer");
 }
 
-void ParticleManager::loadUintUniform(GLuint shaderProgramID, std::string name, GLuint value){
+void ParticleManager::loadUintUniform(GLuint shaderProgramID, const std::string& name, GLuint value){
 	glGetError();
 
 	int _uniID = glGetUniformLocation(shaderProgramID, name.c_str());
@@ -56,7 +56,7 @@ void ParticleManager::loadUintUniform(GLuint shaderProgramID, std::string name, 
 	}
 }
 
-void ParticleManager::loadFloatUniform(GLuint shaderProgramID, std::string name, GLfloat value){
+void ParticleManager::loadFloatUniform(GLuint shaderProgramID, const std::string& name, GLfloat value){
 	glGetError();
 
 	int _uniID = glGetUniformLocation(shaderProgramID, name.c_str());
@@ -72,7 +72,7 @@ void ParticleManager::loadFloatUniform(GLuint shaderProgramID, std::string name,
 	}
 }
 
-void ParticleManager::loadVec4Uniform(GLuint shaderProgramID, std::string name, GLfloat x, GLfloat y, GLfloat z, GLfloat w){
+void ParticleManager::loadVec4Uniform(GLuint shaderProgramID, const std::string& name, GLfloat x, GLfloat y, GLfloat z, GLfloat w){
 	glGetError();
 	int _uniID = glGetUniformLocation(shaderProgramID, name.c_str());
 
@@ -87,7 +87,7 @@ void ParticleManager::loadVec4Uniform(GLuint shaderProgramID, std::string name, 
 	}
 }
 
-void ParticleManager::loadMatrix4Uniform(GLuint shaderProgramID, std::string name, const GLfloat* value){
+void ParticleManager::loadMatrix4Uniform(GLuint shaderProgramID, const std::string& name, const GLfloat* value){
 	glGetError();
 	int _uniID = glGetUniformLocation(shaderProgramID, name.c_str());
 
@@ -102,12 +102,17 @@ void ParticleManager::loadMatrix4Uniform(GLuint shaderProgramID, std::string nam
 	}
 }
 
-void ParticleManager::deleteParticleManager(){
-	GLuint ID = _bufferData.getBufferID("particleBuffer");
-	glDeleteBuffers(1, &ID);
-	if(glGetError() != GL_NO_ERROR){
-		throw std::runtime_error("ERROR: Could not delete particleBuffer!");
+void ParticleManager::deleteParticleManager() noexcept{
+	try{
+		GLuint ID = _bufferData.getBufferID("particleBuffer");
+		glDeleteBuffers(1, &ID);
+		
+		if(glGetError() != GL_NO_ERROR){
+			throw std::runtime_error("");
+		}
+		
+		_bufferData.deleteBuffer("particleBuffer");
+	} catch(...){
+		std::cout << "ERROR: Could not delete particleBuffer!" <<std::endl;
 	}
-	
-	_bufferData.deleteBuffer("particleBuffer");
 }

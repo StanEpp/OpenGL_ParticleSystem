@@ -7,8 +7,7 @@
 	#include <GLFW\glfw3.h>
 #endif
 
-#include <boost\shared_ptr.hpp>
-
+#include <memory>
 #include <string>
 #include <map>
 
@@ -16,18 +15,17 @@
 
 class BufferBaseModel{
 	friend class ParticleManager;
-private:
-	boost::shared_ptr<std::map<std::string, GLuint> >	_buffer;
 
-	BufferBaseModel() : _buffer(new std::map<std::string, GLuint>()){}
+private:
+	std::map<std::string, GLuint>	_buffer;
 
 public:
 
 	/*Returns bufferID with the associated Key. Returns 0 if Key does not exist. */
-	GLuint getBufferID(std::string bufferKey){
-		std::map<std::string, GLuint>::iterator it = _buffer->find(bufferKey);
+	GLuint getBufferID(std::string bufferKey) const{
+		auto it = _buffer.find(bufferKey);
 
-		if(it == _buffer->end()){
+		if(it == _buffer.end()){
 			return 0;
 		} else {
 			return it->second;
@@ -36,18 +34,18 @@ public:
 	}
 
 	/*Returns false, if element with the same key already exists, otherwise returns true */
-	bool saveBuffer(std::string bufferKey, GLuint bufferID){
-		return _buffer->insert(std::pair<std::string, GLuint>(bufferKey, bufferID) ).second;	
+	bool saveBuffer(const std::string& bufferKey, GLuint bufferID){
+		return _buffer.insert(std::pair<std::string, GLuint>(bufferKey, bufferID) ).second;
 	}
 
-	void deleteBuffer(std::string ShaderKey){
-		_buffer->erase(ShaderKey);
+	void deleteBuffer(const std::string& ShaderKey){
+		_buffer.erase(ShaderKey);
 	}
 
 	GLuint removeHead(){
-		if(!_buffer->empty()){
-			GLuint ID = _buffer->begin()->second;
-			_buffer->erase(_buffer->begin());
+		if(!_buffer.empty()){
+			GLuint ID = _buffer.begin()->second;
+			_buffer.erase(_buffer.begin());
 			return ID;
 		} else {
 			return 0;

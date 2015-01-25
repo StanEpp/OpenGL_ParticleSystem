@@ -12,8 +12,6 @@
 
 class FPCamera : public ICameraRender<glm::mat4, glm::vec4, float> {
 public:
-	FPCamera(){}
-	~FPCamera(){}
 
 	virtual void updateCamera(CameraModel<glm::mat4, glm::vec4, float>* camera){
 		glm::vec4 up, lookTo, right, position;
@@ -34,7 +32,7 @@ public:
 		rotationMatrix = rotZ*rotY*rotX;
 
 		lookTo	= rotationMatrix*lookTo;
-		lookTo = glm::normalize(lookTo);
+		lookTo	= glm::normalize(lookTo);
 
 		up		= rotationMatrix*up;
 		up		= glm::normalize(up);
@@ -62,7 +60,6 @@ public:
 		camera->setRightVector(right);
 		camera->setViewMatrix(viewMatrix);
 		camera->setRotMatrix(rotationMatrix);
-
 	}
 };
 

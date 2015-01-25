@@ -1,18 +1,13 @@
 #include "ParticleTexture.h"
 
-void ParticleTexture::loadTexture(const char* path){
-	char* filename = new char[strlen(path)+1];
-	filename = strcpy(filename, path);
-	tTGA   tga;
-
-	if (!load_TGA(&tga, filename)){
-		delete filename;
-    throw std::runtime_error("ERROR: Could not load particle texture!");
-  }
-	delete filename;
+void ParticleTexture::loadTexture(const std::string& path){
+	tTGA	tga;
+	if (!load_TGA(&tga, path.c_str())){
+		throw std::runtime_error("ERROR: Could not load particle texture!");
+	}
 
 	glGetError();
-	
+
 	glGenTextures(1, &_textureID);
 	glBindTexture(GL_TEXTURE_2D, _textureID);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -32,7 +27,7 @@ void ParticleTexture::loadTexture(const char* path){
 	if(glGetError() != GL_NO_ERROR){
 		glDeleteTextures(1, &_textureID);
 		free_TGA(&tga);
-		
+
 		throw std::runtime_error("ERROR: Could not initialize particle texture!");
 	}
 	
@@ -43,14 +38,13 @@ void ParticleTexture::useTexture(GLuint shaderProgramID){
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, _textureID);
-	
+
 	_uniTexture = glGetUniformLocation(shaderProgramID, "texture");
-	
+
 	if(glGetError() != GL_NO_ERROR){
 		throw std::runtime_error("ERROR: Could not get texture-uniform-location!");
 	}
 	glUniform1i(_uniTexture, 0);
-	
 }
 
 void ParticleTexture::deleteTexture(){

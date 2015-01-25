@@ -1,7 +1,7 @@
 #ifndef _CAMERA_
 #define _CAMERA_
 
-#include <boost\shared_ptr.hpp>
+#include <memory>
 
 #include "CameraModel.h"
 #include "ICameraRender.h"
@@ -9,115 +9,111 @@
 template <class Matrix, class Vector, class Value>
 class Camera{
 private:
-	boost::shared_ptr<ICameraRender<Matrix, Vector, Value> >	_cameraRender;
-	boost::shared_ptr<CameraModel<Matrix, Vector, Value> >		_cameraModel;
+	std::shared_ptr<ICameraRender<Matrix, Vector, Value> >	_cameraRender;
+	std::shared_ptr<CameraModel<Matrix, Vector, Value> >	_cameraModel;
 
 public:
 	Camera() : _cameraModel(new CameraModel<Matrix, Vector, Value>()){}
 
 	Camera(ICameraRender<Matrix, Vector, Value>* cameraRender) : 
-									_cameraModel(new CameraModel<Matrix, Vector, Value>()){
-		_cameraRender = boost::shared_ptr<ICameraRender<Matrix, Vector, Value> >(cameraRender);
-	}
-
-	~Camera(){}
+		_cameraRender(cameraRender), _cameraModel(new CameraModel<Matrix, Vector, Value>()) {}
 
 	void updateCamera(){
 		_cameraRender->updateCamera(_cameraModel.get());
 	}
 
-	void setCameraRender(ICameraRender<Matrix, Vector, Value>* cameraRender){
-		_cameraRender.swap(boost::shared_ptr<ICameraRender<Matrix, Vector, Value> >(cameraRender));
+	void setCameraRender(std::shared_ptr<ICameraRender<Matrix, Vector, Value>> cameraRender){
+		_cameraRender.swap(cameraRender);
 	}
 
-	Matrix		getViewMatrix(){
+	Matrix	getViewMatrix() const{
 		return _cameraModel->getViewMatrix();
 	}
 
-	Matrix		getRotMatrix(){
+	Matrix	getRotMatrix() const{
 		return	_cameraModel->getRotMatrix();
 	}
 
-	Vector		getPosition(){
+	Vector	getPosition() const{
 		return _cameraModel->getPosition();
 	}
-	Vector		getLookToVector(){
+	Vector	getLookToVector() const{
 		return _cameraModel->getLookToVector();
 	}
 
-	Vector		getUpVector(){
+	Vector	getUpVector() const{
 		return _cameraModel->getUpVector();
 	}
 	
-	Vector		getRightVector(){
+	Vector	getRightVector() const{
 		return _cameraModel->getRightVector();
 	}
 
-	Vector		getRotationVector(){
+	Vector	getRotationVector() const{
 		return _cameraModel->getRotationVector();
 	}
 
-	Value		getPitch(){
+	Value	getPitch() const{
 		return _cameraModel->getPitch();
 	}
 
-	Value		getYaw(){
+	Value	getYaw() const{
 		return _cameraModel->getYaw();
 	}
 
-	Value		getRoll(){
+	Value	getRoll() const{
 		return _cameraModel->getRoll();
 	}
 
-	void		setPosition(Vector position){
+	void	setPosition(const Vector& position){
 		_cameraModel->setPosition(position);
 	}
 
-	void		setLookToVector(Vector lookTo){
+	void	setLookToVector(const Vector& lookTo){
 		_cameraModel->setLookToVector(lookTo);
 	}
 
-	void		setUpVector(Vector up){
+	void	setUpVector(const Vector& up){
 		_cameraModel->setUpVector(up);
 	}
 	
-	void		setRightVector(Vector right){
+	void	setRightVector(const Vector& right){
 		_cameraModel->setRightVector(right);
 	}
 
-	void		setAddPitch(Value pitch){
+	void	setAddPitch(const Value& pitch){
 		_cameraModel->setAddPitch(pitch);
 	}
 
-	void		setAddYaw(Value yaw){
+	void	setAddYaw(const Value& yaw){
 		_cameraModel->setAddYaw(yaw);
 	}
 
-	void		setAddRoll(Value roll){
+	void	setAddRoll(const Value& roll){
 		_cameraModel->setAddRoll(roll);
 	}
 
-	void		setAddXPos(Value addXPos){
+	void	setAddXPos(const Value& addXPos){
 		_cameraModel->setAddXPos(addXPos);
 	}
 
-	void		setAddYPos(Value addYPos){
+	void	setAddYPos(const Value& addYPos){
 		_cameraModel->setAddYPos(addYPos);
 	}
 
-	void		setAddZPos(Value addZPos){
+	void	setAddZPos(const Value& addZPos){
 		_cameraModel->setAddZPos(addZPos);
 	}
 
-	void		setPitch(Value pitch){
+	void	setPitch(const Value& pitch){
 		_cameraModel->setPitch(pitch);
 	}
 
-	void		setYaw(Value yaw){
+	void	setYaw(const Value& yaw){
 		_cameraModel->setYaw(yaw);
 	}
 
-	void		setRoll(Value roll){
+	void	setRoll(const Value& roll){
 		_cameraModel->setRoll(roll);
 	}
 

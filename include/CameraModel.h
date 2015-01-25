@@ -11,88 +11,86 @@ private:
 	Value		_addXPos, _addYPos, _addZPos;
 
 public:
-	CameraModel() : _viewMatrix(), _rotMatrix(), _lookTo(), _up(), _position(){}
-	~CameraModel(){}
 
-	Matrix		getViewMatrix(){	return _viewMatrix; }
-	Matrix		getRotMatrix(){		return _rotMatrix; }
+	Matrix	getViewMatrix() const{	return _viewMatrix; }
+	Matrix	getRotMatrix() const{	return _rotMatrix; }
 
-	Vector		getPosition(){		return _position; }
-	Vector		getLookToVector(){	return _lookTo; }
-	Vector		getUpVector(){		return _up; }
-	Vector		getRightVector(){		return _right; }
-	Vector		getRotation(){		return Vector(_pitch, _yaw, _roll); }
+	Vector	getPosition() const{	return _position; }
+	Vector	getLookToVector() const{	return _lookTo; }
+	Vector	getUpVector() const{	return _up; }
+	Vector	getRightVector() const{	return _right; }
+	Vector	getRotation() const{	return Vector(_pitch, _yaw, _roll); }
 
-	Value		getPitch(){			return _pitch; }
-	Value		getYaw(){			return _yaw; }
-	Value		getRoll(){			return _roll; }
+	Value	getPitch() const{	return _pitch; }
+	Value	getYaw() const{	return _yaw; }
+	Value	getRoll() const{	return _roll; }
 
-	Value		getAddPitch(){			return _addPitch; }
-	Value		getAddYaw(){			return _addYaw; }
-	Value		getAddRoll(){			return _addRoll; }
+	Value	getAddPitch() const{	return _addPitch; }
+	Value	getAddYaw() const{	return _addYaw; }
+	Value	getAddRoll() const{	return _addRoll; }
 
-	Value		getAddXPos(){			return _addXPos; }
-	Value		getAddYPos(){			return _addYPos; }
-	Value		getAddZPos(){			return _addZPos; }
+	Value	getAddXPos() const{	return _addXPos; }
+	Value	getAddYPos() const{	return _addYPos; }
+	Value	getAddZPos() const{	return _addZPos; }
 
-	void		setViewMatrix(Matrix mat){
-					_viewMatrix = mat;
+	void	setViewMatrix(const Matrix& mat){
+		_viewMatrix = mat;
 	}
 
-	void		setRotMatrix(Matrix mat){
-					_rotMatrix = mat;
+	void	setRotMatrix(const Matrix& mat){
+		_rotMatrix = mat;
 	}
 
-	void		setPosition(Vector position){
-					_position = position;
+	void	setPosition(const Vector& position){
+		_position = position;
 	}
 
-	void		setLookToVector(Vector lookTo){
-					_lookTo = lookTo;
+	void	setLookToVector(const Vector& lookTo){
+		_lookTo = lookTo;
 	}
 
-	void		setUpVector(Vector up){
-					_up = up;
+	void	setUpVector(const Vector& up){
+		_up = up;
 	}
 	
-	void		setRightVector(Vector right){
-					_right = right;
+	void	setRightVector(const Vector& right){
+		_right = right;
 	}
 
-	void		setPitch(Value pitch){
-					_pitch = pitch;
+	void	setPitch(const Value& pitch){
+		_pitch = pitch;
 	}
 
-	void		setYaw(Value yaw){
-					_yaw = yaw;
+	void	setYaw(const Value& yaw){
+		_yaw = yaw;
 	}
 
-	void		setRoll(Value roll){
-					_roll = roll;
+	void	setRoll(const Value& roll){
+		_roll = roll;
 	}
 
-	void		setAddPitch(Value AddPitch){
-					_addPitch = AddPitch;
+	void	setAddPitch(const Value& AddPitch){
+		_addPitch = AddPitch;
 	}
 
-	void		setAddYaw(Value AddYaw){
-					_addYaw = AddYaw;
+	void	setAddYaw(const Value& AddYaw){
+		_addYaw = AddYaw;
 	}
 
-	void		setAddRoll(Value AddRoll){
-					_addRoll = AddRoll;
+	void	setAddRoll(const Value& AddRoll){
+		_addRoll = AddRoll;
 	}
 
-	void		setAddXPos(Value AddXPos){
-					_addXPos = AddXPos;
+	void	setAddXPos(const Value& AddXPos){
+		_addXPos = AddXPos;
 	}
 
-	void		setAddYPos(Value AddYPos){
-					_addYPos = AddYPos;
+	void	setAddYPos(const Value& AddYPos){
+		_addYPos = AddYPos;
 	}
 
-	void		setAddZPos(Value AddZPos){
-					_addZPos = AddZPos;
+	void	setAddZPos(const Value& AddZPos){
+		_addZPos = AddZPos;
 	}
 
 };

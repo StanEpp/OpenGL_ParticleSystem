@@ -13,21 +13,15 @@
 
 class GLFWWindow{
 private:
-	int					_width, _height;
-	int					_windowHandle;
+	int	_width, _height;
+	int	_windowHandle;
 	std::string	_windowName;
-	bool				_windowed;
+	bool	_windowed;
 	GLFWwindow*	_window;
 	
 public: 
-	GLFWWindow(int width, int height, char* windowName, bool windowed){
-		_width = width;
-		_height = height;
-
-		_windowName = std::string(windowName);
-
-		_windowed = windowed;
-
+	GLFWWindow(int width, int height, const std::string& windowName, bool windowed) : 
+		_width(width), _height(height), _windowName(windowName), _windowed(windowed){
 		initialize();
 		setVSync(false);
 	}
@@ -36,15 +30,15 @@ public:
 		glfwTerminate();
 	}
 
-	int getWidth(){
+	int getWidth() const{
 		return _width;
 	}
 
-	int getHeight(){
+	int getHeight() const{
 		return _height;
 	}
 	
-	GLFWwindow* getGLFWwindow(){
+	GLFWwindow* getGLFWwindow() const{
 		return _window;
 	}
 	
@@ -52,8 +46,8 @@ public:
 		glfwSwapBuffers(_window);
 	}
 	
-	void setWindowTitle(const char *title){
-		glfwSetWindowTitle(_window, title);
+	void setWindowTitle(const std::string& title){
+		glfwSetWindowTitle(_window, title.c_str());
 	}
 
 	void setDefaultWindowTitle(){
@@ -61,13 +55,12 @@ public:
 	}
 
 	void setVSync(bool enable){
-		glfwSwapInterval( enable?1:0);
+		glfwSwapInterval(enable?1:0);
 	}
-
 
 private:
 
-	void initialize(){	
+	void initialize(){
 		if(glfwInit() != GL_TRUE){
 			throw std::runtime_error("Could not initialize GLFW!");
 		}
