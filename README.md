@@ -6,6 +6,7 @@ This is a small particle system written in C++11/14 with OpenGL. It uses compute
 - E, Q -  Adjusting the attractor's depth
 - Left mouse button  - Activating the attractor mode (Camera does not move anymore)
 - Right mouse button -  Activating the attractor as the source of gravity (Only in attractor mode)
+- Space - Toggle VSync
 
 
 ## Used Libraries

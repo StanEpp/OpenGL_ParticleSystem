@@ -13,5 +13,4 @@ sizeOfParticles 0.01
 ## Window
 width 1024
 height 768
-maxFps 60
 fullscreen 0

@@ -43,7 +43,6 @@ private:
   ParticleTexture _particleTexture;
   GLuint  _vertexUVBufferID;
   GLuint  _vertexArrayID;
-  int     _maxFPS;
   float   _quadLength;
   bool    _showFPS;
   GLuint  _computeProgID, _shaderProgID;

@@ -23,9 +23,9 @@ class Config{
   
   struct Window{
     int width, height;
-    int maxFps;
+    // int maxFps;
     bool fullscreen;
-    Window() : width(1024), height(768), maxFps(60), fullscreen(false){}
+    Window() : width(1024), height(768), fullscreen(false){}
   };
   
 public:
@@ -105,7 +105,7 @@ public:
             case Window: {
               if(descr.compare("width") == 0){ window.width = std::stoi(value); }
               else if(descr.compare("height") == 0){ window.height = std::stoi(value); }
-              else if(descr.compare("maxFps") == 0){ window.maxFps = std::stoi(value); }
+              // else if(descr.compare("maxFps") == 0){ window.maxFps = std::stoi(value); }
               else if(descr.compare("fullscreen") == 0){ window.fullscreen = std::stoi(value); }
             } break;
             default:

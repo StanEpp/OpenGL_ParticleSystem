@@ -55,7 +55,7 @@ public:
 
   void setVSync(bool enable){
     _vSync = enable;
-    glfwSwapInterval(_vSync?1:0);
+    glfwSwapInterval(_vSync?0:1);
   }
   
   bool isVSyncOn(){
@@ -85,7 +85,7 @@ public:
 
     glfwMakeContextCurrent(_window);
     
-    glfwSwapInterval(_vSync?1:0);
+    glfwSwapInterval(_vSync?0:1);
   }
 };
 

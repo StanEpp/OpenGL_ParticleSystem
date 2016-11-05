@@ -7,7 +7,6 @@ ParticleSystem::ParticleSystem(const Config& config) :
   _attractor(),
   _particleBuffer(config.particles.numParticles, config.particles.initRadius),
   _particleTexture(),
-  _maxFPS(config.window.maxFps),
   _quadLength(config.particles.sizeOfParticles),
   _showFPS(false),
   _computeProgID(0), _shaderProgID(0),
