@@ -7,17 +7,17 @@ uniform sampler2D texture;
 uniform float time;
 
 void main(void){
-	vec4 outputColor = texture2D(texture, ex_TexCoor)*8;
+  vec4 outputColor = texture2D(texture, ex_TexCoor)*4;
   
-	float red, green, blue;
+  float red, green, blue;
   
-	red 	= -0.5 + cos(time*0.4+1.5)*0.5;
-	green = -0.5 + cos(time*0.6)*sin(time*0.3)*0.35;
-	blue 	= -0.5 + sin(time*0.2)*0.5;
+  red   =  cos(time*0.0004+1.5) + 1.f;
+  green =  cos(time*0.0006)*sin(time*0.0003)*0.35 + 1.f;
+  blue  =  sin(time*0.000002)*0.5 + 1.f;
   
-	outputColor.x = outputColor.x + red;
-	outputColor.y = outputColor.y + green;
-	outputColor.z = outputColor.z  + blue;
+  outputColor.x *=  red;
+  outputColor.y *=  green;
+  outputColor.z *=  blue;
   
-	color = outputColor;
+  color = outputColor;
 }

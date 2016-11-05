@@ -3,30 +3,29 @@
 
 #ifndef _GLEW_
 #define _GLEW_
-	#include <GL\glew.h>
+	#include <GL\gl3w.h>
 	#include <GLFW\glfw3.h>
 #endif
 
 #include <stdexcept>
-#include <string>
-
 #include "tga.h"
 
 class ParticleTexture{
 private:
-	GLuint	_textureID;
-	GLint	_uniTexture;
+  GLuint _textureID;
 
-	void deleteTexture();
+  void deleteTexture() noexcept;
 
 public:
+  ParticleTexture();
+  ParticleTexture(ParticleTexture&) = delete;
+  ParticleTexture(ParticleTexture&&) = delete;
+  ParticleTexture& operator=(ParticleTexture&) = delete;
+  ParticleTexture& operator=(ParticleTexture&&) = delete;
+  ~ParticleTexture();
 
-	~ParticleTexture(){
-		deleteTexture();
-	}
-
-void loadTexture(const std::string& path);
-void useTexture(const GLuint shaderProgramID);
+  void loadTexture(const std::string& path);
+  void useTexture(const GLuint shaderProgramID);
 
 };
 

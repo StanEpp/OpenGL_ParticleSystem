@@ -3,7 +3,7 @@
 
 #ifndef _GLEW_
 #define _GLEW_
-	#include <GL\glew.h>
+	#include <GL\gl3w.h>
 	#include <GLFW\glfw3.h>
 #endif
 
@@ -11,63 +11,60 @@
 #define GLM_FORCE_RADIANS
 
 #include <iostream>
+#include <chrono>
 
 #include <glm\glm.hpp>
 #include <glm\gtc\matrix_transform.hpp>
 #include <glm\gtc\matrix_access.hpp>
 #include <glm\gtc\type_ptr.hpp>
 
-#include <memory>
-#include <boost\lexical_cast.hpp>
-
-#include "Classes.h"
 #include "ShaderManager.h"
-#include "ParticleManager.h"
+#include "ParticleBuffer.h"
 #include "ParticleTexture.h"
 #include "Attractor.h"
-#include "RayCastAttractorUpdate.h"
-#include "IAttractorUpdate.h"
 #include "GLFWWindow.h"
 #include "GLFWInput.h"
-#include "GLFWTimer.h"
-#include "Particle.h"
-#include "FPCamera.h"
+#include "Timer.h"
+#include "FirstPersonCamera.h"
 #include "Camera.h"
-#include "FPCamera.h"
+#include "ConfigLoader.h"
 
 struct Vertex{
-	glm::vec4 pos;
+  glm::vec4 pos;
 };
 
 class ParticleSystem{
 private:
-	std::shared_ptr<Camera<glm::mat4, glm::vec4, float> >	_camera;
-	std::shared_ptr<GLFWInput>	_input;
-	std::shared_ptr<Attractor<glm::mat4, glm::vec4, float> >	_attractor;
-	std::shared_ptr<ParticleManager>	_particleManager;
-	std::shared_ptr<ParticleTexture>	_particleTexture;
-	glm::mat4	_projectionMatrix;
-	int	_numParticles, _iniRadius, _maxFPS;
-	float	_quadLength, _velocityTranslate, _velocityRotate;
-	bool	_useGravity, _showFPS;
+  GLFWWindow  _window;
+  GLFWInput   _input;
+  Camera<FirstPersonCamera> _camera;
+  Attractor   _attractor;
+  ParticleBuffer  _particleBuffer;
+  ParticleTexture _particleTexture;
+  GLuint  _vertexUVBufferID;
+  GLuint  _vertexArrayID;
+  int     _maxFPS;
+  float   _quadLength;
+  bool    _showFPS;
+  GLuint  _computeProgID, _shaderProgID;
 
-	ShaderManager*	_shaderManager;
+  ShaderManager  _shaderManager;
 
-	void initialize(int width, int height);
-	void render(double frameTimeDiff, double time);
-	void input(double frameTimeDiff, GLFWWindow* wnd);
-	void deleteParticleSystem() noexcept;
-
-	GLuint	_vertexUVBufferID;
-	GLuint 	_VertexArrayID;
+  void render(double, double);
+  void deleteParticleSystem() noexcept;
+  
 public:
-	ParticleSystem(int numParticles, int iniRadius, float _quadLength, int maxFPS, float velocityTranslate, float velocityRotate);
-	~ParticleSystem();
+  ParticleSystem() = delete;
+  ParticleSystem(const Config&);
+  ParticleSystem(ParticleSystem&) = delete;
+  ParticleSystem(ParticleSystem&&) = delete;
+  ParticleSystem& operator=(ParticleSystem&) = delete;
+  ParticleSystem& operator=(ParticleSystem&&) = delete;
+  ~ParticleSystem();
 
-	void run(GLFWWindow* wnd);
-	void resize(int width, int height);
-
-
+  void initialize();
+  void run();
+  void resize(int width, int height);
 };
 
 

@@ -3,87 +3,90 @@
 
 #ifndef _GLEW_
 #define _GLEW_
-	#include <GL\glew.h>
-	#include <GLFW\glfw3.h>
+  #include <GL\gl3w.h>
+  #include <GLFW\glfw3.h>
 #endif
-
-#include <stdlib.h>
-#include <stdexcept>
-
 
 class GLFWWindow{
 private:
-	int	_width, _height;
-	int	_windowHandle;
-	std::string	_windowName;
-	bool	_windowed;
-	GLFWwindow*	_window;
-	
+  int _width, _height;
+  std::string _windowName;
+  bool  _fullscreen, _vSync;
+  GLFWwindow * _window;
+  
 public: 
-	GLFWWindow(int width, int height, const std::string& windowName, bool windowed) : 
-		_width(width), _height(height), _windowName(windowName), _windowed(windowed){
-		initialize();
-		setVSync(false);
-	}
+  GLFWWindow() : _width(1024), _height(768), _windowName("GLFW Window"), _fullscreen(false), _vSync(false), _window(nullptr) {} 
+  GLFWWindow(int width, int height, const std::string& windowName, bool fullscreen, bool vSync = false) : 
+    _width(width), _height(height), _windowName(windowName), _fullscreen(fullscreen), _vSync(vSync) {}
+  GLFWWindow(GLFWWindow&) = delete;
+  GLFWWindow(GLFWWindow&&) = delete;
+  GLFWWindow& operator=(GLFWWindow&) = delete;
+  GLFWWindow& operator=(GLFWWindow&&) = delete;
 
-	~GLFWWindow(){
-		glfwTerminate();
-	}
+  ~GLFWWindow(){
+    glfwMakeContextCurrent(nullptr);
+    glfwDestroyWindow(_window);
+    glfwTerminate();
+  }
 
-	int getWidth() const{
-		return _width;
-	}
+  int getWidth() const{
+    return _width;
+  }
 
-	int getHeight() const{
-		return _height;
-	}
-	
-	GLFWwindow* getGLFWwindow() const{
-		return _window;
-	}
-	
-	void swapBuffers(){
-		glfwSwapBuffers(_window);
-	}
-	
-	void setWindowTitle(const std::string& title){
-		glfwSetWindowTitle(_window, title.c_str());
-	}
+  int getHeight() const{
+    return _height;
+  }
+  
+  GLFWwindow* getGLFWwindow() const{
+    return _window;
+  }
+  
+  void swapBuffers(){
+    glfwSwapBuffers(_window);
+  }
+  
+  void setWindowTitle(const std::string& title){
+    glfwSetWindowTitle(_window, title.c_str());
+  }
 
-	void setDefaultWindowTitle(){
-		glfwSetWindowTitle(_window, _windowName.c_str());
-	}
+  void setDefaultWindowTitle(){
+    glfwSetWindowTitle(_window, _windowName.c_str());
+  }
 
-	void setVSync(bool enable){
-		glfwSwapInterval(enable?1:0);
-	}
+  void setVSync(bool enable){
+    _vSync = enable;
+    glfwSwapInterval(_vSync?1:0);
+  }
+  
+  bool isVSyncOn(){
+    return _vSync;
+  }
 
-private:
+  void initialize(){
+    if(glfwInit() != GL_TRUE){
+      throw std::runtime_error("Could not initialize GLFW!");
+    }
+    
+    glfwDefaultWindowHints();
+    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    _window = glfwCreateWindow(_width, _height, _windowName.c_str(), _fullscreen?glfwGetPrimaryMonitor():0, 0);
+    
+    if(!_window){
+      glfwTerminate();
+      throw std::runtime_error("Could not open GLFW Window!");
+    } 
 
-	void initialize(){
-		if(glfwInit() != GL_TRUE){
-			throw std::runtime_error("Could not initialize GLFW!");
-		}
-		
-		glfwDefaultWindowHints();
-		glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		_window = glfwCreateWindow(_width, _height, _windowName.c_str(), _windowed?NULL:glfwGetPrimaryMonitor(), NULL);
-		
-		if(!_window){
-			glfwTerminate();
-			throw std::runtime_error("Could not open GLFW Window!");
-		} 
+    setDefaultWindowTitle();
+    
+    glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-		setWindowTitle(_windowName.c_str());
-		
-		glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-		glfwMakeContextCurrent(_window);
-	}
-	
+    glfwMakeContextCurrent(_window);
+    
+    glfwSwapInterval(_vSync?1:0);
+  }
 };
 
 

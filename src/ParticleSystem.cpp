@@ -1,267 +1,182 @@
 #include "ParticleSystem.h"
 
-ParticleSystem::ParticleSystem(int numParticles, int iniRadius, float quadLength, int maxFPS, float velocityTranslate, float velocityRotate) :
-	_camera(new Camera<glm::mat4, glm::vec4, float>(new FPCamera())),
-	_input(new GLFWInput()),
-	_attractor(new Attractor<glm::mat4, glm::vec4, float>(nullptr)),
-	_particleManager(new ParticleManager()),
-	_particleTexture(new ParticleTexture()),
-	_numParticles(numParticles),
-	_iniRadius(iniRadius),
-	_maxFPS(maxFPS),
-	_quadLength(quadLength),
-	_velocityTranslate(velocityTranslate),
-	_velocityRotate(velocityRotate),
-	_useGravity(false),
-	_showFPS(false),
-	_shaderManager(ShaderManager::getInstance())
-	{}
+ParticleSystem::ParticleSystem(const Config& config) :
+  _window(config.window.width, config.window.height, "OpenGL_4.3_Particle_System", config.window.fullscreen),
+  _input(),
+  _camera(config.camera.speed, config.camera.sensitivity, config.camera.foV, config.window.width, config.window.height, config.camera.nearDist, config.camera.farDist),
+  _attractor(),
+  _particleBuffer(config.particles.numParticles, config.particles.initRadius),
+  _particleTexture(),
+  _maxFPS(config.window.maxFps),
+  _quadLength(config.particles.sizeOfParticles),
+  _showFPS(false),
+  _computeProgID(0), _shaderProgID(0),
+  _shaderManager()
+  {}
 
 ParticleSystem::~ParticleSystem(){
-	deleteParticleSystem();
+  deleteParticleSystem();
 }
 
-void ParticleSystem::initialize(int width, int height){
-	glGenVertexArrays(1, &_VertexArrayID);
-	glBindVertexArray(_VertexArrayID);
-	
-	//Initiliaze shader and shader program
-	_shaderManager->loadShader("vs.glsl", "vertexShader", GL_VERTEX_SHADER);
-	_shaderManager->loadShader("gs.glsl", "geometryShader", GL_GEOMETRY_SHADER);
-	_shaderManager->loadShader("fs.glsl", "fragmentShader", GL_FRAGMENT_SHADER);
-	_shaderManager->loadShader("cs.glsl", "computeShader", GL_COMPUTE_SHADER);
+void ParticleSystem::initialize(){
+  //////// Initialize GLFW window, input, rendering context and gl3w
+  _window.initialize();
+  _window.setVSync(true);
+  _input.bindInputToWindow(_window);
+  
+  if(gl3wInit()) throw std::runtime_error("Could not initialize gl3w!");
+  if(!gl3wIsSupported(4, 3)) throw std::runtime_error("OpenGL 4.3 not supported!");
+  
+  std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
+  std::cout << "GLSL Version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+  
+  // Generate Vertex Arrays and initialize particles
+  _particleBuffer.initializeParticles();
+  
+  glGenVertexArrays(1, &_vertexArrayID);
+  glBindVertexArray(_vertexArrayID);
+  glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, _particleBuffer.getParticleBufferID());
+  glEnableVertexAttribArray(0);
+  glBindBuffer(GL_ARRAY_BUFFER, _particleBuffer.getParticleBufferID());
+  glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Particle), (GLvoid*)0);
+  glBindVertexArray(0);
 
-	_shaderManager->createProgram("shaderProg");
-	_shaderManager->createProgram("computeProg");
+  //Initiliaze shader and shader program
+  _shaderManager.loadShader("vs.glsl", "vertexShader", GL_VERTEX_SHADER);
+  _shaderManager.loadShader("gs.glsl", "geometryShader", GL_GEOMETRY_SHADER);
+  _shaderManager.loadShader("fs.glsl", "fragmentShader", GL_FRAGMENT_SHADER);
+  _shaderManager.loadShader("cs.glsl", "computeShader", GL_COMPUTE_SHADER);
 
-	_shaderManager->attachShader("vertexShader", "shaderProg");
-	_shaderManager->attachShader("geometryShader", "shaderProg");
-	_shaderManager->attachShader("fragmentShader", "shaderProg");
-	_shaderManager->attachShader("computeShader", "computeProg");
+  _shaderProgID = _shaderManager.createProgram("shaderProg");
+  _computeProgID = _shaderManager.createProgram("computeProg");
 
-	_shaderManager->linkProgram("computeProg");
-	_shaderManager->linkProgram("shaderProg");
+  _shaderManager.attachShader("vertexShader", "shaderProg");
+  _shaderManager.attachShader("geometryShader", "shaderProg");
+  _shaderManager.attachShader("fragmentShader", "shaderProg");
+  _shaderManager.attachShader("computeShader", "computeProg");
 
-	//Since the programs are linked the shaders are not needed anymore
-	_shaderManager->deleteShader("vertexShader");
-	_shaderManager->deleteShader("geometryShader");
-	_shaderManager->deleteShader("fragmentShader");
-	_shaderManager->deleteShader("computeShader");
+  _shaderManager.linkProgram("computeProg");
+  _shaderManager.linkProgram("shaderProg");
 
-	_particleManager->loadParticleBuffer(_numParticles, _iniRadius);
+  // Since the programs are linked, the shaders are not needed anymore
+  _shaderManager.deleteShader("vertexShader");
+  _shaderManager.deleteShader("geometryShader");
+  _shaderManager.deleteShader("fragmentShader");
+  _shaderManager.deleteShader("computeShader");
 
-	_particleTexture->loadTexture("Particle.tga");
+  _particleTexture.loadTexture("Particle.tga");
 
-	_projectionMatrix = glm::perspective(45.0f, (float)width/(float)height, 1.f, 1000.0f);
+  _camera.setPosition(glm::vec4(0,0,0,1));
 
-	std::shared_ptr<RayCastAttractorUpdate> attUpdate(new RayCastAttractorUpdate());
-	attUpdate->initAttractor(width, height, 45.0f, 1.f);
-	_attractor->setUpdateStrategy(attUpdate);
-
-	_camera->setPosition(glm::vec4(0,0,0,1));
-	_camera->setAddPitch(0); _camera->setAddRoll(0); _camera->setAddYaw(0);
-	_camera->setAddXPos(0); _camera->setAddYPos(0); _camera->setAddZPos(0);
-	_camera->setPitch(0); _camera->setRoll(0); _camera->setYaw(0);
-
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-
-} 
+  glDisable(GL_DEPTH_TEST);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+}
 
 void ParticleSystem::resize(int width, int height){
-	_projectionMatrix = glm::perspective(45.0f, (float)width/(float)height, 0.01f, 1000.0f);
+  _camera.resize(width, height);
 }
 
-void ParticleSystem::run(GLFWWindow* wnd){
-	initialize(wnd->getWidth(), wnd->getHeight());
+void ParticleSystem::run(){
+  
+  using namespace std::chrono;
+  
+  bool running = true;
+  
+  Timer timer;
+  timer.start = Timer::currentTime();
+  timer.nextGameTick = Timer::currentTime();
+  timer.lastFpsUpdate = timer.nextGameTick;
+  timer.lastFrameRendered = timer.nextGameTick;
+  std::string fpsStr;
+  
+  while(running){
+    timer.skippedFrames = 0;
+    
+    while(Timer::currentTime() > timer.nextGameTick && timer.skippedFrames < timer.maxFrameskip){
+      _input.updateInput();
+      
+      // Exit the program if ESC is pressed
+      if(_input.isKeyPressed(GLFW_KEY_ESCAPE)){
+        running = false;
+      }
+      // Show FPS when TAB is pressed
+      if(_input.isKeyPressedOnce(GLFW_KEY_TAB)){
+        _showFPS = !_showFPS;
+        if(!_showFPS) _window.setDefaultWindowTitle();
+      }
+      // Enable/Disable VSync when Space is pressed
+      if(_input.isKeyPressedOnce(GLFW_KEY_SPACE)){
+        _window.setVSync(!_window.isVSyncOn());
+      }
+      timer.nextGameTick += timer.skipTicks;
+      timer.skippedFrames++;
+    }
+    
+    auto dt = duration_cast<duration<double>>(Timer::currentTime() - timer.lastFrameRendered).count();
+    timer.lastFrameRendered = Timer::currentTime();
+    
+    _camera.updateCamera(dt, _input);
+    _attractor.updateAttractor(_camera, _input);
+    auto currTime = duration_cast<milliseconds>(timer.start - Timer::currentTime()).count();
+    render(dt, currTime);
 
-	bool running = true;
+    // Compute FPS and store them in a string.
+    if (duration_cast<milliseconds>(Timer::currentTime() - timer.lastFpsUpdate) >= milliseconds(1000)) {
+      fpsStr = std::to_string(timer.framesRendered);
+      timer.lastFpsUpdate = Timer::currentTime();
+      timer.framesRendered = 0;
+    }
+    timer.framesRendered++;
 
-	int frameCounter = 0, fps = 0;
-	double frameTimeDiff;
-
-	GLFWTimer fpsTimer;
-
-	fpsTimer.getTimeDiff();
-
-	while(running){
-
-		if(fpsTimer.getTimeDiffWithoutActualization() > (1.0/static_cast<float>(_maxFPS))){
-			frameTimeDiff = fpsTimer.getTimeDiff();
-
-			input(frameTimeDiff, wnd);
-			_camera->updateCamera();
-			_attractor->updateAttractor(_camera.get(), _input.get());
-			render(frameTimeDiff, fpsTimer.getRefreshedTime());
-
-			wnd->swapBuffers();
-
-			/////////////Calculate FPS and draw them in the window title////////////////////
-			frameCounter++;
-			if(fpsTimer.getRefreshedTime() > 1.0f){
-				fps = frameCounter;
-				frameCounter = 0;
-				fpsTimer.resetTime();
-			}
-
-			if(_showFPS){
-				wnd->setWindowTitle(boost::lexical_cast<std::string, int>(fps).c_str());
-			}
-		}
-		/////////////////////////////////////////////////////////////////////////////////
-		
-		//Exit the program if the esc-key is pressed
-		if(_input->isKeyPressed(GLFW_KEY_ESCAPE, wnd->getGLFWwindow())){
-			running = false;
-		}
-	}
+    if(_showFPS) _window.setWindowTitle(fpsStr);
+    
+    _window.swapBuffers();
+  }
 }
 
-void ParticleSystem::render(double frameTimeDiff, double time){
-	glClearColor(0.0, 0.0, 0.0, 0.0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+void ParticleSystem::render(double dt, double time){
+  glClearColor(0.0, 0.0, 0.0, 0.0);
+  glClear(GL_COLOR_BUFFER_BIT);
 
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, _particleManager->getParticleBufferID());
-	_shaderManager->useProgram("computeProg");
+  glBindVertexArray(_vertexArrayID);
+  
+  _shaderManager.useProgram(_computeProgID);
+  
+  _shaderManager.loadUniform(_computeProgID, "frameTimeDiff", static_cast<GLfloat>(dt));
+  
+  _shaderManager.loadUniform(_computeProgID, "attPos",
+    _attractor.getPosition().x,
+    _attractor.getPosition().y,
+    _attractor.getPosition().z,
+    _attractor.isActive()?1.0f:-1.0f); //Uses the last vector-entry to determine whether the attractor or the gravity is used
 
-	_particleManager->loadFloatUniform(
-		_shaderManager->getShaderProgramID("computeProg"),
-		"frameTimeDiff",
-		static_cast<float>(frameTimeDiff));
-	
-	_particleManager->loadVec4Uniform(
-		_shaderManager->getShaderProgramID("computeProg"), 
-		"attPos",
-		_attractor->getAttractorPos().x,
-		_attractor->getAttractorPos().y,
-		_attractor->getAttractorPos().z,
-		_useGravity?1.0f:-1.0f); //Uses the last vector-entry to determine whether the attractor or the gravity is used
+  _shaderManager.loadUniform(_computeProgID, "maxParticles", _particleBuffer.getNumParticles());
 
-	_particleManager->loadUintUniform(
-		_shaderManager->getShaderProgramID("computeProg"), 
-		"maxParticles",
-		(GLuint)_numParticles
-		);
-	
-	glDispatchCompute((_numParticles/WORK_GROUP_SIZE)+1, 1, 1);
-	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT | GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
+  glDispatchCompute((_particleBuffer.getNumParticles()/WORK_GROUP_SIZE)+1, 1, 1);
+  glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT | GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
 
-	_shaderManager->useProgram("shaderProg");
+  _shaderManager.useProgram(_shaderProgID);
 
-	_particleManager->loadMatrix4Uniform(
-		_shaderManager->getShaderProgramID("shaderProg"),
-		"viewMatrix",
-		glm::value_ptr(_camera->getViewMatrix()));
+  _shaderManager.loadMatrix4(_shaderProgID, "viewMatrix", glm::value_ptr(_camera.getViewMatrix()));
 
-	_particleManager->loadVec4Uniform(
-		_shaderManager->getShaderProgramID("shaderProg"),
-		"camPos",
-		_camera->getPosition().x,
-		_camera->getPosition().y,
-		_camera->getPosition().z,
-		1.0f);
+  _shaderManager.loadUniform(_shaderProgID, "camPos",
+    _camera.getPosition().x,
+    _camera.getPosition().y,
+    _camera.getPosition().z,
+    1.0f);
 
-	_particleManager->loadMatrix4Uniform(
-		_shaderManager->getShaderProgramID("shaderProg"),
-		"projMatrix",
-		glm::value_ptr(_projectionMatrix));
+  _shaderManager.loadMatrix4(_shaderProgID, "projMatrix", glm::value_ptr(_camera.getProjectionMatrix()));
+  _shaderManager.loadUniform(_shaderProgID, "quadLength", _quadLength);
+  _shaderManager.loadUniform(_shaderProgID, "time", static_cast<GLfloat>(time));
 
-	_particleManager->loadFloatUniform(
-		_shaderManager->getShaderProgramID("shaderProg"),
-		"quadLength",
-		_quadLength);
-
-	_particleManager->loadFloatUniform(
-		_shaderManager->getShaderProgramID("shaderProg"),
-		"time",
-		static_cast<float>(time));
-
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, _particleManager->getParticleBufferID());
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Particle), (GLvoid*)0);
-	glDrawArrays(GL_POINTS, 0, _numParticles);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-
-void ParticleSystem::input(double frameTimeDiff, GLFWWindow* wnd){
-	GLFWwindow* glfwnd = wnd->getGLFWwindow();
-	
-	if(_input->isKeyPressed(GLFW_KEY_W, glfwnd)){
-		_camera->setAddZPos(_velocityTranslate*(float)frameTimeDiff);
-	}
-
-	if(_input->isKeyPressed(GLFW_KEY_S, glfwnd)){
-		_camera->setAddZPos(-1*_velocityTranslate*(float)frameTimeDiff);
-	}
-
-	if(_input->isKeyPressed(GLFW_KEY_D, glfwnd)){
-		_camera->setAddXPos(_velocityTranslate*(float)frameTimeDiff);
-	}
-
-	if(_input->isKeyPressed(GLFW_KEY_A, glfwnd)){
-		_camera->setAddXPos(-1*_velocityTranslate*(float)frameTimeDiff);
-	}
-	
-	if(_input->isKeyPressed(GLFW_KEY_UP, glfwnd)){
-		_attractor->incrementDepth(1.0f);
-	}
-	
-	if(_input->isKeyPressed(GLFW_KEY_DOWN, glfwnd)){
-		_attractor->incrementDepth(-1.0f);
-	}
-
-	if(_input->isKeyPressedOnce(GLFW_KEY_TAB, glfwnd)){
-		if(_showFPS){
-			_showFPS = false;
-			wnd->setDefaultWindowTitle();
-		} else {
-			_showFPS = true;
-		}
-	}
-
-	if(!_input->isMouseButtonPressed(GLFW_MOUSE_BUTTON_RIGHT, glfwnd)){
-		glfwPollEvents();
-		if(_input->getXPosDiff(glfwnd) != 0 && _input->getXPosDiff(glfwnd) >= 0){
-			_camera->setAddYaw(-(float)_input->getXPosDiff(glfwnd)*_velocityRotate*(float)frameTimeDiff);
-		}
-		glfwPollEvents();
-		if(_input->getXPosDiff(glfwnd) != 0 && _input->getXPosDiff(glfwnd) <= 0){
-			_camera->setAddYaw(-(float)_input->getXPosDiff(glfwnd)*_velocityRotate*(float)frameTimeDiff);
-			
-		}
-		glfwPollEvents();
-		if(_input->getYPosDiff(glfwnd) != 0 && _input->getYPosDiff(glfwnd) >= 0){
-			_camera->setAddPitch(-(float)_input->getYPosDiff(glfwnd)*_velocityRotate*(float)frameTimeDiff);
-		}
-		glfwPollEvents();
-		if(_input->getYPosDiff(glfwnd) != 0 && _input->getYPosDiff(glfwnd) <= 0){
-			_camera->setAddPitch(-(float)_input->getYPosDiff(glfwnd)*_velocityRotate*(float)frameTimeDiff);
-
-		}
-
-	} else {
-		if(_input->isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT, glfwnd)){
-			_attractor->updateAttractor(_camera.get(), _input.get());
-			_useGravity = true;
-		} else {
-			_useGravity = false;
-		}
-	}
-
-	_input->updateInput(glfwnd);
+  glDrawArrays(GL_POINTS, 0, _particleBuffer.getNumParticles());
+  
+  glBindVertexArray(0);
 }
 
 void ParticleSystem::deleteParticleSystem() noexcept{
-	glUseProgram(0);
-
-	try{
-		_shaderManager->deleteProgram("shaderProg");
-		_shaderManager->deleteProgram("computeProg");
-	} catch(std::exception& e){
-		std::cout << e.what() <<std::endl;
-	} catch(...){
-		std::cout << "ERROR while deleting particle system!" <<std::endl;
-	}
-
+  glUseProgram(0);
+  _shaderManager.deleteProgram(_computeProgID);
+  _shaderManager.deleteProgram(_shaderProgID);
 }

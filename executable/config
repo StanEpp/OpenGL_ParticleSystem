@@ -1,0 +1,17 @@
+## Camera
+speed 100
+sensitivity 25
+nearDist 1
+farDist 1000
+foV 45
+
+## Particles
+initRadius 16
+numParticles 100000
+sizeOfParticles 0.01
+
+## Window
+width 1024
+height 768
+maxFps 60
+fullscreen 0

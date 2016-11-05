@@ -1,121 +1,107 @@
 #ifndef _CAMERA_
 #define _CAMERA_
 
-#include <memory>
+#include <glm\glm.hpp>
+#include "GLFWInput.h"
 
-#include "CameraModel.h"
-#include "ICameraRender.h"
-
-template <class Matrix, class Vector, class Value>
+template<class UpdatePolicy>
 class Camera{
 private:
-	std::shared_ptr<ICameraRender<Matrix, Vector, Value> >	_cameraRender;
-	std::shared_ptr<CameraModel<Matrix, Vector, Value> >	_cameraModel;
-
+  glm::mat4 _projectionMatrix;
+  float _fov, _nearPlane, _farPlane;
+  int _width, _height;
+  
+  glm::mat4  _viewMatrix, _rotMatrix;
+  glm::vec4  _lookTo, _up, _right, _position;
+  float _xRot, _yRot, _zRot;
+  float _speed, _sensitivity;
+  
+  friend UpdatePolicy;
+  UpdatePolicy _updatePolicy;
+  
+  void setProjectionMatrix(){
+    auto aspectRatio = static_cast<float>(_width)/static_cast<float>(_height);
+    _projectionMatrix = glm::perspective(_fov, aspectRatio, _nearPlane, _farPlane);
+  }
+  
 public:
-	Camera() : _cameraModel(new CameraModel<Matrix, Vector, Value>()){}
+  Camera() = delete;
+  Camera(float speed, float sensitivity, float fov, int screenWidth, int screenHeight, float nearPlane, float farPlane) : 
+    _projectionMatrix(), _fov(fov), _nearPlane(nearPlane), _farPlane(farPlane),
+    _width(screenWidth), _height(screenHeight),
+    _viewMatrix(), _rotMatrix(),
+    _lookTo(0, 0, 0, 1), _up(), _right(), _position(0, 0, 0, 1),
+    _xRot(0), _yRot(0), _zRot(0),
+    _speed(speed), _sensitivity(sensitivity)
+    {
+      setProjectionMatrix();
+    }
 
-	Camera(ICameraRender<Matrix, Vector, Value>* cameraRender) : 
-		_cameraRender(cameraRender), _cameraModel(new CameraModel<Matrix, Vector, Value>()) {}
+  void updateCamera(double dt, const GLFWInput& input){
+    _updatePolicy.updateCamera(*this, input, dt);
+  }
+  
+  void resize(int width, int height){
+    _width = width; 
+    _height = height;
+    setProjectionMatrix();
+  }
+  
+  glm::mat4 getProjectionMatrix() const{
+    return _projectionMatrix;
+  }
+  
+  float getFOV() const{
+    return _fov;
+  }
+  
+  float getNearPlane() const{
+    return _nearPlane;
+  }
+  
+  float getFarPlane() const{
+    return _farPlane;
+  }
+  
+  int getWidth() const{
+    return _width;
+  }
+  
+  int getHeight() const{
+    return _height;
+  }
 
-	void updateCamera(){
-		_cameraRender->updateCamera(_cameraModel.get());
-	}
+  glm::mat4 getViewMatrix() const{
+    return _viewMatrix;
+  }
 
-	void setCameraRender(std::shared_ptr<ICameraRender<Matrix, Vector, Value>> cameraRender){
-		_cameraRender.swap(cameraRender);
-	}
+  glm::vec4 getRotMatrix() const{
+    return  _rotMatrix;
+  }
 
-	Matrix	getViewMatrix() const{
-		return _cameraModel->getViewMatrix();
-	}
+  glm::vec4 getPosition() const{
+    return _position;
+  }
+  
+  glm::vec4 getLookToVector() const{
+    return _lookTo;
+  }
 
-	Matrix	getRotMatrix() const{
-		return	_cameraModel->getRotMatrix();
-	}
+  glm::vec4 getUpVector() const{
+    return _up;
+  }
 
-	Vector	getPosition() const{
-		return _cameraModel->getPosition();
-	}
-	Vector	getLookToVector() const{
-		return _cameraModel->getLookToVector();
-	}
+  glm::vec4 getRightVector() const{
+    return _right;
+  }
 
-	Vector	getUpVector() const{
-		return _cameraModel->getUpVector();
-	}
-	
-	Vector	getRightVector() const{
-		return _cameraModel->getRightVector();
-	}
-
-	Vector	getRotationVector() const{
-		return _cameraModel->getRotationVector();
-	}
-
-	Value	getPitch() const{
-		return _cameraModel->getPitch();
-	}
-
-	Value	getYaw() const{
-		return _cameraModel->getYaw();
-	}
-
-	Value	getRoll() const{
-		return _cameraModel->getRoll();
-	}
-
-	void	setPosition(const Vector& position){
-		_cameraModel->setPosition(position);
-	}
-
-	void	setLookToVector(const Vector& lookTo){
-		_cameraModel->setLookToVector(lookTo);
-	}
-
-	void	setUpVector(const Vector& up){
-		_cameraModel->setUpVector(up);
-	}
-	
-	void	setRightVector(const Vector& right){
-		_cameraModel->setRightVector(right);
-	}
-
-	void	setAddPitch(const Value& pitch){
-		_cameraModel->setAddPitch(pitch);
-	}
-
-	void	setAddYaw(const Value& yaw){
-		_cameraModel->setAddYaw(yaw);
-	}
-
-	void	setAddRoll(const Value& roll){
-		_cameraModel->setAddRoll(roll);
-	}
-
-	void	setAddXPos(const Value& addXPos){
-		_cameraModel->setAddXPos(addXPos);
-	}
-
-	void	setAddYPos(const Value& addYPos){
-		_cameraModel->setAddYPos(addYPos);
-	}
-
-	void	setAddZPos(const Value& addZPos){
-		_cameraModel->setAddZPos(addZPos);
-	}
-
-	void	setPitch(const Value& pitch){
-		_cameraModel->setPitch(pitch);
-	}
-
-	void	setYaw(const Value& yaw){
-		_cameraModel->setYaw(yaw);
-	}
-
-	void	setRoll(const Value& roll){
-		_cameraModel->setRoll(roll);
-	}
+  glm::vec4 getRotationVector() const{
+    return glm::vec4(_xRot, _yRot, _zRot, 0.f);
+  }
+  
+  void  setPosition(const glm::vec4& position){
+    _position = position;
+  }
 
 };
 
