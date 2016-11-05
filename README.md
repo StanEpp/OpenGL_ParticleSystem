@@ -20,7 +20,7 @@ If no GLFW window can be created nor an OpenGL context then make sure you have g
 
 ## Comment
 
-I started this project to learn OpenGL. It has been revised several time since the commit. When there are bugs, design problems or inconsistencies please let me know.
+I started this project to learn OpenGL. It has been revised several time since the first commit. When there are bugs, design problems or inconsistencies please let me know.
 
 You can use this code as you like for every purpose. It would be kind to mention my name "Stanislaw Eppinger" when you use the code.
 
