@@ -25,7 +25,7 @@ public:
   ~ParticleTexture();
 
   void loadTexture(const std::string& path);
-  void useTexture(const GLuint shaderProgramID);
+  void useTexture(GLuint shaderProgramID);
 
 };
 

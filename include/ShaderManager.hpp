@@ -45,7 +45,7 @@ private:
   }
 
   template<typename... Args>
-  void uploadUniforms(const GLuint uniID, Args... args);
+  void uploadUniforms(GLuint uniID, Args... args);
 
   const std::string errVal(GLenum error);
 
@@ -57,7 +57,7 @@ public:
   ShaderManager& operator=(ShaderManager&) = delete;
   ShaderManager& operator=(ShaderManager&&) = delete;
 
-  void  loadShader(const std::string& filename, const std::string& shaderKey, const GLenum type);
+  void  loadShader(const std::string& filename, const std::string& shaderKey, GLenum type);
   void  attachShader(const std::string& shaderKey, const std::string& shaderProgramKey);
   void  detachShader(const std::string& shaderKey, const std::string& shaderProgramKey);
 
@@ -65,10 +65,10 @@ public:
   GLuint  createProgram();
 
   void    useProgram(const std::string& shaderProgramKey);
-  void    useProgram(const GLuint shaderProgramID);
+  void    useProgram(GLuint shaderProgramID);
 
   void    linkProgram(const std::string& shaderProgramKey);
-  void    linkProgram(const GLuint& shaderProgramID);
+  void    linkProgram(GLuint shaderProgramID);
 
   GLuint  getShaderID(const std::string& shaderKey);
   GLuint  getShaderProgramID(const std::string& shaderProgramKey);
@@ -77,21 +77,21 @@ public:
   void    unoccupyUBOBindingPoint(GLuint point);
 
   void  deleteProgram(const std::string& shaderProgramKey);
-  void  deleteProgram(const GLuint& shaderProgramID);
+  void  deleteProgram(GLuint shaderProgramID);
 
   void  deleteShader(const std::string& shaderKey);
-  void  deleteShader(const GLuint& shaderID);
+  void  deleteShader(GLuint shaderID);
 
   void  resetProgram();
 
   void  loadMatrix4(const std::string& shaderProgram, const std::string& name, const GLfloat* value);
-  void  loadMatrix4(const GLuint shaderProgramID, const std::string& name, const GLfloat* value);
+  void  loadMatrix4(GLuint shaderProgramID, const std::string& name, const GLfloat* value);
 
   void  getBufferVariableIndices(const std::string& shaderProgram, const int length, const GLchar** names, GLint* indices);
 
 
   template<typename... Args>
-  void loadUniform(const GLuint shaderProgramID, const std::string& name, Args... args){
+  void loadUniform(GLuint shaderProgramID, const std::string& name, Args... args){
     checkForHomogenousTypes<Args...>();
 
     glGetError();
@@ -112,7 +112,7 @@ public:
   }
 
   template<typename... Args>
-  void loadUniform(const std::string& shaderProgram, const std::string& name, Args... args){
+  void loadUniform(std::string& shaderProgram, const std::string& name, Args... args){
     checkForHomogenousTypes<Args...>();
 
     glGetError();

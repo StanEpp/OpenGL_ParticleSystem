@@ -2,32 +2,32 @@
 
 /////// Specialization of the uploadUniforms template method
 template<>
-void ShaderManager::uploadUniforms<GLfloat, GLfloat, GLfloat, GLfloat>(const GLuint uniID, const GLfloat x, const GLfloat y, const GLfloat z, const GLfloat w){
+void ShaderManager::uploadUniforms<GLfloat, GLfloat, GLfloat, GLfloat>(GLuint uniID, GLfloat x, GLfloat y, GLfloat z, GLfloat w){
   glUniform4f(uniID, x, y, z, w);
 }
 
 template<>
-void ShaderManager::uploadUniforms<GLfloat, GLfloat, GLfloat>(const GLuint uniID, const GLfloat x, const GLfloat y, const GLfloat z){
+void ShaderManager::uploadUniforms<GLfloat, GLfloat, GLfloat>(GLuint uniID, GLfloat x, GLfloat y, GLfloat z){
   glUniform3f(uniID, x, y, z);
 }
 
 template<>
-void ShaderManager::uploadUniforms<GLfloat, GLfloat>(const GLuint uniID, const GLfloat x, const GLfloat y){
+void ShaderManager::uploadUniforms<GLfloat, GLfloat>(GLuint uniID, GLfloat x, GLfloat y){
   glUniform2f(uniID, x, y);
 }
 
 template<>
-void ShaderManager::uploadUniforms<GLfloat>(const GLuint uniID, const GLfloat x){
+void ShaderManager::uploadUniforms<GLfloat>(GLuint uniID, GLfloat x){
   glUniform1f(uniID, x);
 }
 
 template<>
-void ShaderManager::uploadUniforms<GLint>(const GLuint uniID, const GLint x){
+void ShaderManager::uploadUniforms<GLint>(GLuint uniID, GLint x){
   glUniform1i(uniID, x);
 }
 
 template<>
-void ShaderManager::uploadUniforms<GLuint>(const GLuint uniID, const GLuint x){
+void ShaderManager::uploadUniforms<GLuint>(GLuint uniID, GLuint x){
   glUniform1ui(uniID, x);
 }
 //////////////////////////////////////////////////////////////////////
@@ -54,7 +54,7 @@ std::string ShaderManager::getFileContents(const std::string& filename) const{
   throw std::runtime_error("Could not open file: " + filename + " !");
 }
 
-void ShaderManager::loadShader(const std::string& filename, const std::string& shaderKey, const GLenum type){
+void ShaderManager::loadShader(const std::string& filename, const std::string& shaderKey, GLenum type){
   auto shaderCode = getFileContents(filename);
 
   glGetError();
@@ -179,7 +179,7 @@ void ShaderManager::linkProgram(const std::string& shaderProgramKey){
   linkProgram(shaderProgramID);
 }
 
-void ShaderManager::linkProgram(const GLuint& shaderProgramID){
+void ShaderManager::linkProgram(GLuint shaderProgramID){
   glGetError();
 
   if (shaderProgramID != 0){
@@ -243,7 +243,7 @@ void ShaderManager::deleteProgram(const std::string& shaderProgramKey){
   _shaderData.deleteShaderProgram(shaderProgramKey);
 }
 
-void ShaderManager::deleteProgram(const GLuint& shaderProgramID){
+void ShaderManager::deleteProgram(GLuint shaderProgramID){
   glGetError();
   
   if (shaderProgramID != 0) glDeleteProgram(shaderProgramID);
@@ -261,7 +261,7 @@ void ShaderManager::deleteShader(const std::string& shaderKey){
   _shaderData.deleteShader(shaderKey);
 }
 
-void ShaderManager::deleteShader(const GLuint& shaderID){
+void ShaderManager::deleteShader(GLuint shaderID){
   glGetError();
 
   if (shaderID != 0) glDeleteShader(shaderID);
