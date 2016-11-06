@@ -6,8 +6,8 @@
 #include <glm\glm.hpp>
 #include <glm\gtx\transform.hpp>
 
-#include "Camera.h"
-#include "GLFWInput.h"
+#include "Camera.hpp"
+#include "GLFWInput.hpp"
 
 class FirstPersonCamera {
 public:

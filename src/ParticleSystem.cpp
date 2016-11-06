@@ -1,4 +1,4 @@
-#include "ParticleSystem.h"
+#include "ParticleSystem.hpp"
 
 ParticleSystem::ParticleSystem(const Config& config) :
   _window(config.window.width, config.window.height, "OpenGL_4.3_Particle_System", config.window.fullscreen),

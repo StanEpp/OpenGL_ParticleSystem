@@ -1,4 +1,4 @@
-#include "ParticleTexture.h"
+#include "ParticleTexture.hpp"
 
 ParticleTexture::ParticleTexture() : _textureID(0) {}
 ParticleTexture::~ParticleTexture() {

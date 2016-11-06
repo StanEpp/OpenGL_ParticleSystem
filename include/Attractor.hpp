@@ -5,8 +5,8 @@
 
 #include <glm\glm.hpp>
 
-#include "Camera.h"
-#include "GLFWInput.h"
+#include "Camera.hpp"
+#include "GLFWInput.hpp"
 
 #define PI 3.14159265358979323846f
 

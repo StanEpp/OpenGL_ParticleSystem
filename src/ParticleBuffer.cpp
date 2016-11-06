@@ -1,4 +1,4 @@
-#include "ParticleBuffer.h"
+#include "ParticleBuffer.hpp"
 
 ParticleBuffer::ParticleBuffer() : _buffID(0), _numParticles(1000), _initRadius(15) {}
 ParticleBuffer::ParticleBuffer(unsigned int numParticles, int initRadius) : _buffID(0), _numParticles(numParticles), _initRadius(initRadius) {}

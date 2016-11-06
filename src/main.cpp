@@ -1,8 +1,8 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "ConfigLoader.h"
-#include "ParticleSystem.h"
+#include "ConfigLoader.hpp"
+#include "ParticleSystem.hpp"
 
 int main(){
   

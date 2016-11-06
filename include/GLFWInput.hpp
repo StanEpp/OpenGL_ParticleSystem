@@ -9,7 +9,7 @@
 
 #include <unordered_set>
 #include <array>
-#include "GLFWWindow.h"
+#include "GLFWWindow.hpp"
 
 class GLFWInput{
 private:

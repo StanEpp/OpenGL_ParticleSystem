@@ -18,16 +18,16 @@
 #include <glm\gtc\matrix_access.hpp>
 #include <glm\gtc\type_ptr.hpp>
 
-#include "ShaderManager.h"
-#include "ParticleBuffer.h"
-#include "ParticleTexture.h"
-#include "Attractor.h"
-#include "GLFWWindow.h"
-#include "GLFWInput.h"
-#include "Timer.h"
-#include "FirstPersonCamera.h"
-#include "Camera.h"
-#include "ConfigLoader.h"
+#include "ShaderManager.hpp"
+#include "ParticleBuffer.hpp"
+#include "ParticleTexture.hpp"
+#include "Attractor.hpp"
+#include "GLFWWindow.hpp"
+#include "GLFWInput.hpp"
+#include "Timer.hpp"
+#include "FirstPersonCamera.hpp"
+#include "Camera.hpp"
+#include "ConfigLoader.hpp"
 
 struct Vertex{
   glm::vec4 pos;

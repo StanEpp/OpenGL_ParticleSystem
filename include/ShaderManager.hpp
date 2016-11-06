@@ -12,7 +12,7 @@
 #include <string>
 #include <fstream>
 
-#include "ShaderBaseModel.h"
+#include "ShaderBaseModel.hpp"
 
 template<class T, class...>
 struct are_same : std::true_type {};

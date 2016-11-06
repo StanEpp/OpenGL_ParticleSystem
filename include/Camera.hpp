@@ -2,7 +2,7 @@
 #define _CAMERA_
 
 #include <glm\glm.hpp>
-#include "GLFWInput.h"
+#include "GLFWInput.hpp"
 
 template<class UpdatePolicy>
 class Camera{
