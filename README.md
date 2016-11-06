@@ -20,8 +20,8 @@ If no GLFW window can be created nor an OpenGL context then make sure you have g
 
 ## Comment
 
-I started this project to learn OpenGL. It has been revised several time since the first commit. When there are bugs, design problems or inconsistencies please let me know.
+I started this project to learn OpenGL. It has been revised several times since the first commit. When there are bugs, design problems or inconsistencies please let me know.
 
-You can use this code as you like for every purpose. It would be kind to mention my name "Stanislaw Eppinger" when you use the code.
+You can use this code as you like for every purpose. It would be kind to mention my name "Stanislaw Eppinger" when you use it.
 
-When you've got any questions regarding this particle system then you may contact me. Thank you for downloading this humble project! =)
+When you've got any questions regarding this particle system then you may contact me. Thank you, for your interest in this humble project! =)

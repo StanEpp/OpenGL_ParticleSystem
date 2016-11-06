@@ -24,9 +24,7 @@ public:
   ParticleBuffer(ParticleBuffer&&) = delete;
   ParticleBuffer& operator=(ParticleBuffer&) = delete;
   ParticleBuffer& operator=(ParticleBuffer&&) = delete;
-  ~ParticleBuffer(){
-    deleteParticleBuffer();
-  }
+  ~ParticleBuffer();
 
   void initializeParticles();
 

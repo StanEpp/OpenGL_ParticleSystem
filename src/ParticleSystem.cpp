@@ -175,7 +175,6 @@ void ParticleSystem::render(double dt, double time){
 }
 
 void ParticleSystem::deleteParticleSystem() noexcept{
-  glUseProgram(0);
-  _shaderManager.deleteProgram(_computeProgID);
-  _shaderManager.deleteProgram(_shaderProgID);
+  if(_computeProgID)_shaderManager.deleteProgram(_computeProgID);
+  if(_shaderProgID) _shaderManager.deleteProgram(_shaderProgID);
 }

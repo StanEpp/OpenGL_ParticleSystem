@@ -22,6 +22,6 @@ int main(){
     std::cin.get();
     return -1;
   }
-
+  
   return 0;
 }

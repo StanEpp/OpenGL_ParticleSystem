@@ -7,25 +7,28 @@
   #include <GLFW\glfw3.h>
 #endif
 
+#include <stdexcept>
+
 class GLFWWindow{
 private:
   int _width, _height;
   std::string _windowName;
-  bool  _fullscreen, _vSync;
+  bool  _fullscreen, _vSync, _initialized;
   GLFWwindow * _window;
   
 public: 
-  GLFWWindow() : _width(1024), _height(768), _windowName("GLFW Window"), _fullscreen(false), _vSync(false), _window(nullptr) {} 
+  GLFWWindow() : _width(1024), _height(768), _windowName("GLFW Window"), _fullscreen(false), _vSync(false), _initialized(false), _window(nullptr) {} 
   GLFWWindow(int width, int height, const std::string& windowName, bool fullscreen, bool vSync = false) : 
-    _width(width), _height(height), _windowName(windowName), _fullscreen(fullscreen), _vSync(vSync) {}
+    _width(width), _height(height), _windowName(windowName), _fullscreen(fullscreen), _vSync(vSync), _initialized(false), _window(nullptr) {}
   GLFWWindow(GLFWWindow&) = delete;
   GLFWWindow(GLFWWindow&&) = delete;
   GLFWWindow& operator=(GLFWWindow&) = delete;
   GLFWWindow& operator=(GLFWWindow&&) = delete;
 
   ~GLFWWindow(){
+    if(!_initialized) return;
     glfwMakeContextCurrent(nullptr);
-    glfwDestroyWindow(_window);
+    if(_window) glfwDestroyWindow(_window);
     glfwTerminate();
   }
 
@@ -63,9 +66,11 @@ public:
   }
 
   void initialize(){
-    if(glfwInit() != GL_TRUE){
+    if(!glfwInit()){
       throw std::runtime_error("Could not initialize GLFW!");
     }
+    
+    _initialized = true;
     
     glfwDefaultWindowHints();
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
@@ -75,7 +80,6 @@ public:
     _window = glfwCreateWindow(_width, _height, _windowName.c_str(), _fullscreen?glfwGetPrimaryMonitor():0, 0);
     
     if(!_window){
-      glfwTerminate();
       throw std::runtime_error("Could not open GLFW Window!");
     } 
 

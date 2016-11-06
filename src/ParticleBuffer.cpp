@@ -2,6 +2,9 @@
 
 ParticleBuffer::ParticleBuffer() : _buffID(0), _numParticles(1000), _initRadius(15) {}
 ParticleBuffer::ParticleBuffer(unsigned int numParticles, int initRadius) : _buffID(0), _numParticles(numParticles), _initRadius(initRadius) {}
+ParticleBuffer::~ParticleBuffer(){
+  deleteParticleBuffer();
+}
 
 void ParticleBuffer::initializeParticles(){
   Particle* particles = new Particle[_numParticles];
@@ -45,11 +48,8 @@ unsigned int ParticleBuffer::getNumParticles() const{
 }
 
 void ParticleBuffer::deleteParticleBuffer() noexcept{
+  if(!_buffID) return;
   glGetError();
-  
   glDeleteBuffers(1, &_buffID);
-  
-  if(glGetError() != GL_NO_ERROR){
-    std::cerr << "Could not properly delete particle Buffer!" << std::endl;
-  }
+  if(glGetError() != GL_NO_ERROR) std::cerr << "Could not properly delete particle Buffer!" << std::endl;
 }

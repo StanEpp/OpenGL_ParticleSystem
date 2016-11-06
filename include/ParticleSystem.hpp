@@ -3,8 +3,8 @@
 
 #ifndef _GLEW_
 #define _GLEW_
-	#include <GL\gl3w.h>
-	#include <GLFW\glfw3.h>
+  #include <GL\gl3w.h>
+  #include <GLFW\glfw3.h>
 #endif
 
 #define WORK_GROUP_SIZE 256
