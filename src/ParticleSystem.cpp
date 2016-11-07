@@ -66,7 +66,24 @@ void ParticleSystem::initialize(){
   _particleTexture.loadTexture("Particle.tga");
 
   _camera.setPosition(glm::vec4(0,0,0,1));
+  
+  // Retrieve the uniform locations for both shaders and set the 
+  // uniform variables which will not change for every frame.
+  _shaderManager.useProgram(_computeProgID);
+  _shaderManager.loadUniform_(_computeProgID, "maxParticles", _particleBuffer.getNumParticles());
+  _csLocations.frameTimeDiff = _shaderManager.getUniformLocation(_computeProgID, "frameTimeDiff");
+  _csLocations.attPos = _shaderManager.getUniformLocation(_computeProgID, "attPos");
+   
+  _shaderManager.useProgram(_shaderProgID);
+  _shaderManager.loadUniform_(_shaderProgID, "quadLength", _quadLength);
+  _shaderManager.loadMatrix4(_shaderProgID, "projMatrix", glm::value_ptr(_camera.getProjectionMatrix()));
+  _psLocations.viewMatrix = _shaderManager.getUniformLocation(_shaderProgID, "viewMatrix");
+  _psLocations.camPos = _shaderManager.getUniformLocation(_shaderProgID, "camPos");
+  _psLocations.time = _shaderManager.getUniformLocation(_shaderProgID, "time");
+  
+  _shaderManager.resetProgram();
 
+  // Depth test needs to be disabled for only rendering transparent particles. 
   glDisable(GL_DEPTH_TEST);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -74,6 +91,9 @@ void ParticleSystem::initialize(){
 
 void ParticleSystem::resize(int width, int height){
   _camera.resize(width, height);
+  _shaderManager.useProgram(_shaderProgID);
+  _shaderManager.loadMatrix4(_shaderProgID, "projMatrix", glm::value_ptr(_camera.getProjectionMatrix()));
+  _shaderManager.resetProgram();
 }
 
 void ParticleSystem::run(){
@@ -142,36 +162,33 @@ void ParticleSystem::render(double dt, double time){
   
   _shaderManager.useProgram(_computeProgID);
   
-  _shaderManager.loadUniform(_computeProgID, "frameTimeDiff", static_cast<GLfloat>(dt));
+  _shaderManager.loadUniform(_csLocations.frameTimeDiff, static_cast<GLfloat>(dt));
   
-  _shaderManager.loadUniform(_computeProgID, "attPos",
+  _shaderManager.loadUniform(_csLocations.attPos,
     _attractor.getPosition().x,
     _attractor.getPosition().y,
     _attractor.getPosition().z,
     _attractor.isActive()?1.0f:-1.0f); //Uses the last vector-entry to determine whether the attractor or the gravity is used
-
-  _shaderManager.loadUniform(_computeProgID, "maxParticles", _particleBuffer.getNumParticles());
 
   glDispatchCompute((_particleBuffer.getNumParticles()/WORK_GROUP_SIZE)+1, 1, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT | GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
 
   _shaderManager.useProgram(_shaderProgID);
 
-  _shaderManager.loadMatrix4(_shaderProgID, "viewMatrix", glm::value_ptr(_camera.getViewMatrix()));
-
-  _shaderManager.loadUniform(_shaderProgID, "camPos",
+  _shaderManager.loadMatrix4(_psLocations.viewMatrix, glm::value_ptr(_camera.getViewMatrix()));
+  _shaderManager.loadUniform(_psLocations.camPos,
     _camera.getPosition().x,
     _camera.getPosition().y,
     _camera.getPosition().z,
     1.0f);
 
-  _shaderManager.loadMatrix4(_shaderProgID, "projMatrix", glm::value_ptr(_camera.getProjectionMatrix()));
-  _shaderManager.loadUniform(_shaderProgID, "quadLength", _quadLength);
-  _shaderManager.loadUniform(_shaderProgID, "time", static_cast<GLfloat>(time));
+  _shaderManager.loadUniform(_psLocations.time, static_cast<GLfloat>(time));
 
   glDrawArrays(GL_POINTS, 0, _particleBuffer.getNumParticles());
   
   glBindVertexArray(0);
+  
+  _shaderManager.resetProgram();
 }
 
 void ParticleSystem::deleteParticleSystem() noexcept{

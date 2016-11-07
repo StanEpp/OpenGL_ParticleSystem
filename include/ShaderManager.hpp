@@ -86,17 +86,39 @@ public:
 
   void  loadMatrix4(const std::string& shaderProgram, const std::string& name, const GLfloat* value);
   void  loadMatrix4(GLuint shaderProgramID, const std::string& name, const GLfloat* value);
+  void  loadMatrix4(GLint location, const GLfloat* value);
 
-  void  getBufferVariableIndices(const std::string& shaderProgram, const int length, const GLchar** names, GLint* indices);
-
-
+  void  getBufferVariableIndices(const std::string& shaderProgram, int length, const GLchar** names, GLint* indices);
+  
+  GLint getUniformLocation(GLuint shaderProgramID, const std::string& name);
+  GLint getUniformLocation(const std::string& shaderProgramID, const std::string& name);
+  
   template<typename... Args>
-  void loadUniform(GLuint shaderProgramID, const std::string& name, Args... args){
+  void loadUniform(GLint location, Args... args){
+    checkForHomogenousTypes<Args...>();
+    
+    if (location == -1){
+      std::cerr << "ERROR: -1 is not a valid uniform location!" << std::endl;
+      return;
+    }
+
+    glGetError();
+    
+    uploadUniforms(location, args...);
+
+    if (glGetError() != GL_NO_ERROR){
+      std::cerr << "ERROR: Could not update uniform with location" << location <<" !" << std::endl;
+      return;
+    }
+  }
+  
+  template<typename... Args>
+  void loadUniform_(GLuint shaderProgramID, const std::string& name, Args... args){
     checkForHomogenousTypes<Args...>();
 
     glGetError();
 
-    int uniID = glGetUniformLocation(shaderProgramID, name.c_str());
+    auto uniID = glGetUniformLocation(shaderProgramID, name.c_str());
 
     if (glGetError() != GL_NO_ERROR || uniID == -1){
       std::cerr << "ERROR: Could not get " + name + "-uniform-location!" << std::endl;
@@ -112,22 +134,10 @@ public:
   }
 
   template<typename... Args>
-  void loadUniform(std::string& shaderProgram, const std::string& name, Args... args){
+  void loadUniform_(const std::string& shaderProgram, const std::string& name, Args... args){
     checkForHomogenousTypes<Args...>();
 
-    glGetError();
-
-    int uniID = glGetUniformLocation(getShaderProgramID(shaderProgram), name.c_str());
-
-    if (glGetError() != GL_NO_ERROR){
-      std::cerr << "ERROR: Could not get " + name + "-uniform-location!" << std::endl;
-    }
-
-    uploadUniforms(uniID, args...);
-
-    if (glGetError() != GL_NO_ERROR){
-      std::cerr << "ERROR: Could not update " + name + "-uniform-location!" << std::endl;
-    }
+    loadUniform_(getShaderProgramID(shaderProgram), name.c_str(), args...);
   }
 
   // static  ShaderManager* Inst();

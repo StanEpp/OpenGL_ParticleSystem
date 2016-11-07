@@ -48,6 +48,20 @@ private:
   GLuint  _computeProgID, _shaderProgID;
 
   ShaderManager  _shaderManager;
+  
+  
+  struct ComputeShaderUniformLocations {
+    GLuint frameTimeDiff;
+    GLuint attPos;
+    ComputeShaderUniformLocations() : frameTimeDiff(0), attPos(0) {}
+  } _csLocations;
+  
+  struct ParticleShaderUniformLocations {
+    GLuint viewMatrix;
+    GLuint camPos;
+    GLuint time;
+    ParticleShaderUniformLocations() : viewMatrix(0), camPos(0), time(0) {}
+  } _psLocations;
 
   void render(double, double);
   void deleteParticleSystem() noexcept;

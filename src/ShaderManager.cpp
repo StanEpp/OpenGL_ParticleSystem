@@ -256,7 +256,7 @@ void ShaderManager::deleteProgram(GLuint shaderProgramID){
 
 
 void ShaderManager::deleteShader(const std::string& shaderKey){
-  GLuint shaderID = _shaderData.getShaderID(shaderKey);
+  auto shaderID = _shaderData.getShaderID(shaderKey);
   deleteShader(shaderID);
   _shaderData.deleteShader(shaderKey);
 }
@@ -272,32 +272,33 @@ void ShaderManager::deleteShader(GLuint shaderID){
 }
 
 void ShaderManager::loadMatrix4(const std::string& shaderProgram, const std::string& name, const GLfloat* value){
-  glGetError();
-  auto _uniID = glGetUniformLocation(getShaderProgramID(shaderProgram), name.c_str());
-
-  if (glGetError() != GL_NO_ERROR){
-    throw std::runtime_error("ERROR: Could not get " + name + "-uniform-location!");
-  }
-
-  glUniformMatrix4fv(_uniID, 1, GL_FALSE, value);
-
-  if (glGetError() != GL_NO_ERROR){
-    throw std::runtime_error("ERROR: Could not update " + name + "-uniform-location!");
-  }
+  loadMatrix4(getShaderProgramID(shaderProgram), name, value);
 }
 
 void ShaderManager::loadMatrix4(GLuint shaderProgramID, const std::string& name, const GLfloat* value){
   glGetError();
+  
   auto _uniID = glGetUniformLocation(shaderProgramID, name.c_str());
 
   if (glGetError() != GL_NO_ERROR){
     throw std::runtime_error("ERROR: Could not get " + name + "-uniform-location!");
   }
 
-  glUniformMatrix4fv(_uniID, 1, GL_FALSE, value);
+  loadMatrix4(_uniID, value);
+}
+
+void ShaderManager::loadMatrix4(GLint location, const GLfloat* value){
+  if (location == -1){
+    throw std::runtime_error("ERROR: -1 is not a valid uniform location!");
+    return;
+  }
+  
+  glGetError();
+  
+  glUniformMatrix4fv(location, 1, GL_FALSE, value);
 
   if (glGetError() != GL_NO_ERROR){
-    throw std::runtime_error("ERROR: Could not update " + name + "-uniform-location!");
+    throw std::runtime_error("ERROR: Could not update uniform with location " + std::to_string(location) + " !");
   }
 }
 
@@ -305,6 +306,14 @@ void ShaderManager::getBufferVariableIndices(const std::string& shaderProgram, i
   for (int i = 0; i < length; ++i){
     indices[i] = glGetProgramResourceIndex(getShaderProgramID(shaderProgram), GL_BUFFER_VARIABLE, names[i]);
   }
+}
+
+GLint ShaderManager::getUniformLocation(GLuint shaderProgramID, const std::string& name){
+  return glGetUniformLocation(shaderProgramID, name.c_str());
+}
+
+GLint ShaderManager::getUniformLocation(const std::string& shaderProgram, const std::string& name){
+  return getUniformLocation(getShaderProgramID(shaderProgram), name);
 }
 
 const std::string ShaderManager::errVal(GLenum error){
