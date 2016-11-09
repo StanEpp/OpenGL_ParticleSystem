@@ -7,12 +7,13 @@ This is a small particle system written in C++11/14 with OpenGL. It uses compute
 - Left mouse button  - Activating the attractor mode (Camera does not move anymore)
 - Right mouse button -  Activating the attractor as the source of gravity (Only in attractor mode)
 - Space - Toggle VSync
+- TAB - Toggle Fps in title bar. Only visible when in window mode.
 
 
 ## Used Libraries
 - gl3w
 - GLFW 3.2.1
-- GLM
+- GLM 0.9.7.5
 
 ## Errors and Problems
 

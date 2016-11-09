@@ -1,8 +1,8 @@
 #ifndef _PARTICLESYSTEM_
 #define _PARTICLESYSTEM_
 
-#ifndef _GLEW_
-#define _GLEW_
+#ifndef _GL3W_
+#define _GL3W_
   #include <GL\gl3w.h>
   #include <GLFW\glfw3.h>
 #endif
@@ -14,8 +14,6 @@
 #include <chrono>
 
 #include <glm\glm.hpp>
-#include <glm\gtc\matrix_transform.hpp>
-#include <glm\gtc\matrix_access.hpp>
 #include <glm\gtc\type_ptr.hpp>
 
 #include "ShaderManager.hpp"

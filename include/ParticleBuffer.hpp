@@ -1,8 +1,8 @@
 #ifndef _PARTICLEBUFFER_
 #define _PARTICLEBUFFER_
 
-#ifndef _GLEW_
-#define _GLEW_
+#ifndef _GL3W_
+#define _GL3W_
   #include <GL\gl3w.h>
   #include <GLFW\glfw3.h>
 #endif
