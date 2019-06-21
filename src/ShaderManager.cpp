@@ -1,4 +1,4 @@
-#include "shaderManager.hpp"
+#include "ShaderManager.hpp"
 
 /////// Specialization of the uploadUniforms template method
 template<>
