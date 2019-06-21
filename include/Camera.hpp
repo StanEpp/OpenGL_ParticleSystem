@@ -76,7 +76,7 @@ public:
     return _viewMatrix;
   }
 
-  glm::vec4 getRotMatrix() const{
+  glm::mat4 getRotMatrix() const{
     return  _rotMatrix;
   }
 
