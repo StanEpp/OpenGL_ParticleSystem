@@ -3,13 +3,13 @@
 
 #ifndef _GL3W_
 #define _GL3W_
-  #include <GL\gl3w.h>
-  #include <GLFW\glfw3.h>
+  #include <GL/gl3w.h>
+  #include <GLFW/glfw3.h>
 #endif
 
 #include <iostream>
 #include <random>
-#include <glm\glm.hpp>
+#include <glm/glm.hpp>
 
 struct Particle{
   glm::vec4 currPosition;

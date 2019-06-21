@@ -1,8 +1,8 @@
 #ifndef _CAMERA_
 #define _CAMERA_
 
-#include <glm\glm.hpp>
-#include <glm\gtc\matrix_transform.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include "GLFWInput.hpp"
 
 template<class UpdatePolicy>
