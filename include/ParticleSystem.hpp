@@ -3,8 +3,8 @@
 
 #ifndef _GL3W_
 #define _GL3W_
-  #include <GL\gl3w.h>
-  #include <GLFW\glfw3.h>
+  #include <GL/gl3w.h>
+  #include <GLFW/glfw3.h>
 #endif
 
 #define WORK_GROUP_SIZE 256
@@ -13,8 +13,8 @@
 #include <iostream>
 #include <chrono>
 
-#include <glm\glm.hpp>
-#include <glm\gtc\type_ptr.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "ShaderManager.hpp"
 #include "ParticleBuffer.hpp"

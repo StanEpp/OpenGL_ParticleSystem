@@ -13,7 +13,11 @@ CC=gcc
 
 CPPFLAGS= -std=c++14 -Iinclude/ -Wall -s -O3
 CFLAGS = -Iinclude/ -Wall -s
-LFLAGS=-lglfw3 -lopengl32 -lgdi32 -lstdc++
+ifeq ($(OS),Windows_NT) 
+	LFLAGS=-lglfw3 -lopengl32 -lgdi32 -lstdc++
+else
+	LFLAGS=-lglfw -lstdc++ -lm -ldl
+endif
 
 all: src/main.cpp $(OBJECTS)
 	$(CC) $(GDB) $(CPPFLAGS) -o $(TARGETS) $< $(OBJECTS) $(LFLAGS)
