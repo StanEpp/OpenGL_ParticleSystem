@@ -1,17 +1,12 @@
 #include <iostream>
-#include <stdexcept>
 
-#include "ConfigLoader.hpp"
 #include "ParticleSystem.hpp"
 
-int main(){
-  
+int main()
+{
   try{
-    Config config;
-    config.loadConfig();
-    
-    ParticleSystem ps(config);
-    
+    ParticleSystem ps("settings.txt");
+
     std::cout << "Initializing Particle System" <<std::endl;
     ps.initialize();
     std::cout << "Executing Particle System" <<std::endl;
@@ -22,6 +17,6 @@ int main(){
     std::cin.get();
     return -1;
   }
-  
+
   return 0;
 }

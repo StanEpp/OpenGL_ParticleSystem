@@ -1,11 +1,7 @@
-#ifndef _PARTICLESYSTEM_
-#define _PARTICLESYSTEM_
+#pragma once
 
-#ifndef _GL3W_
-#define _GL3W_
-  #include <GL/gl3w.h>
-  #include <GLFW/glfw3.h>
-#endif
+#include <GL/gl3w.h>
+#include <GLFW/glfw3.h>
 
 #define WORK_GROUP_SIZE 256
 #define GLM_FORCE_RADIANS
@@ -23,7 +19,6 @@
 #include "GLFWWindow.hpp"
 #include "GLFWInput.hpp"
 #include "Timer.hpp"
-#include "FirstPersonCamera.hpp"
 #include "Camera.hpp"
 #include "ConfigLoader.hpp"
 
@@ -33,9 +28,10 @@ struct Vertex{
 
 class ParticleSystem{
 private:
-  GLFWWindow  _window;
-  GLFWInput   _input;
-  Camera<FirstPersonCamera> _camera;
+  Settings m_settings;
+  GLFWWindow  m_window;
+  GLFWInput   m_inputControl;
+  Camera _camera;
   Attractor   _attractor;
   ParticleBuffer  _particleBuffer;
   ParticleTexture _particleTexture;
@@ -46,14 +42,14 @@ private:
   GLuint  _computeProgID, _shaderProgID;
 
   ShaderManager  _shaderManager;
-  
-  
+
+
   struct ComputeShaderUniformLocations {
     GLuint frameTimeDiff;
     GLuint attPos;
     ComputeShaderUniformLocations() : frameTimeDiff(0), attPos(0) {}
   } _csLocations;
-  
+
   struct ParticleShaderUniformLocations {
     GLuint viewMatrix;
     GLuint camPos;
@@ -63,10 +59,10 @@ private:
 
   void render(double, double);
   void deleteParticleSystem() noexcept;
-  
+
 public:
   ParticleSystem() = delete;
-  ParticleSystem(const Config&);
+  ParticleSystem(const std::string&);
   ParticleSystem(ParticleSystem&) = delete;
   ParticleSystem(ParticleSystem&&) = delete;
   ParticleSystem& operator=(ParticleSystem&) = delete;
@@ -75,8 +71,4 @@ public:
 
   void initialize();
   void run();
-  void resize(int width, int height);
 };
-
-
-#endif

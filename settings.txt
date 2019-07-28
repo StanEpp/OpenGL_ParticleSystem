@@ -1,0 +1,16 @@
+## Camera
+movementSpeed 50
+cameraSensitivity 0.25
+nearPlane 0.01
+farPlane 1000
+fovY 45
+
+## Particles
+numParticles 100000
+particleSpawnRadius 16
+sizeOfParticle 0.01
+
+## Window
+width 1920
+height 1080
+fullscreen 0
