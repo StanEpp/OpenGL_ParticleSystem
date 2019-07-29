@@ -1,65 +1,66 @@
-#ifndef _SHADERBASEMODEL_
-#define _SHADERBASEMODEL_
+#pragma once
 
-#ifndef _GL3W_
-#define _GL3W_
-  #include <GL/gl3w.h>
-  #include <GLFW/glfw3.h>
-#endif
-
-#include <map>
+#include <unordered_map>
 #include <string>
 
-class ShaderBaseModel{
+#include <GL/gl3w.h>
 
-  friend class ShaderManager;
+class ShaderBaseModel
+{
+    friend class ShaderManager;
 
 private:
-  std::map<std::string, GLuint> _shader;
-  std::map<std::string, GLuint> _shaderProgram;
-
-  //May only be instantiated in ShaderManager
-  ShaderBaseModel() {}
-  ShaderBaseModel(ShaderBaseModel&) = delete;
-  ShaderBaseModel(ShaderBaseModel&&) = delete;
-  ShaderBaseModel& operator=(ShaderBaseModel&) = delete;
-  ShaderBaseModel& operator=(ShaderBaseModel&&) = delete;
+    //May only be instantiated in ShaderManager
+    ShaderBaseModel() {}
 
 public:
+    /*Returns ShaderID with the associated Key. Returns 0 if Key does not exist. */
+    GLuint getShaderID(const std::string& shaderKey)
+    {
+        auto it = m_shader.find(shaderKey);
 
-  // Returns shader ID with the associated Key. Returns 0 if Key does not exist.
-  GLuint getShaderID(const std::string& ShaderKey){
-    auto it = _shader.find(ShaderKey);
-    if(it == _shader.end()) return 0;
-    return it->second;
-  }
+        if (it == m_shader.end()) {
+            return 0;
+        } else {
+            return it->second;
+        }
+    }
 
-  // Returns shader ID with the associated Key. Returns 0 if Key does not exist.
-  GLuint getShaderProgramID(const std::string& ShaderProgramKey){
-    auto it = _shaderProgram.find(ShaderProgramKey);
-    if(it == _shaderProgram.end()) return 0;
-    return it->second;
-  }
+    /*Returns ShaderID with the associated Key. Returns 0 if Key does not exist. */
+    GLuint getShaderProgramID(const std::string& shaderProgramKey)
+    {
+        auto it = m_shaderProgram.find(shaderProgramKey);
 
-  // Returns false if element with the same key already exists, otherwise returns true.
-  bool saveShader(const std::string& ShaderKey, GLuint ShaderID){
-    return _shader.insert(std::make_pair(ShaderKey, ShaderID)).second;
-  }
+        if (it == m_shaderProgram.end()) {
+            return 0;
+        } else {
+            return it->second;
+        }
+    }
 
-  // Returns false if element with the same key already exists, otherwise returns true.
-  bool saveShaderProgram(const std::string& ShaderProgramKey, GLuint ShaderProgramID){
-    return _shaderProgram.insert(std::make_pair(ShaderProgramKey, ShaderProgramID)).second;
-  }
+    /*Returns false, if element with the same key already exists, otherwise returns true */
+    bool saveShader(const std::string& shaderKey,const GLuint ShaderID)
+    {
+        return m_shader.insert(std::make_pair(shaderKey, ShaderID)).second;
+    }
 
-  void deleteShader(const std::string& ShaderKey){
-    _shader.erase(ShaderKey);
-  }
+    /*Returns false, if element with the same key already exists, otherwise returns true */
+    bool saveShaderProgram(const std::string& shaderProgramKey, const GLuint shaderProgramID)
+    {
+        return m_shaderProgram.insert(std::make_pair(shaderProgramKey, shaderProgramID)).second;
+    }
 
-  void deleteShaderProgram(const std::string& ShaderProgramKey){
-    _shaderProgram.erase(ShaderProgramKey);
-  }
+    void deleteShader(const std::string& shaderKey)
+    {
+        m_shader.erase(shaderKey);
+    }
 
+    void deleteShaderProgram(const std::string& shaderProgramKey)
+    {
+        m_shaderProgram.erase(shaderProgramKey);
+    }
+
+private:
+    std::unordered_map<std::string, GLuint> m_shader;
+    std::unordered_map<std::string, GLuint> m_shaderProgram;
 };
-
-
-#endif

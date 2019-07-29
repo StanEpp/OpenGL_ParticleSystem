@@ -1,45 +1,34 @@
-#ifndef _PARTICLEBUFFER_
-#define _PARTICLEBUFFER_
+#pragma once
 
-#ifndef _GL3W_
-#define _GL3W_
-  #include <GL/gl3w.h>
-  #include <GLFW/glfw3.h>
-#endif
-
-#include <iostream>
-#include <random>
+#include <GL/gl3w.h>
 #include <glm/glm.hpp>
 
-struct Particle{
-  glm::vec4 currPosition;
-  glm::vec4 prevPosition;
+struct Particle
+{
+    glm::vec4 currPosition;
+    glm::vec4 prevPosition;
 };
 
-class ParticleBuffer{
+class ParticleBuffer
+{
 public:
-  ParticleBuffer();
-  ParticleBuffer(unsigned int, int);
-  ParticleBuffer(ParticleBuffer&) = delete;
-  ParticleBuffer(ParticleBuffer&&) = delete;
-  ParticleBuffer& operator=(ParticleBuffer&) = delete;
-  ParticleBuffer& operator=(ParticleBuffer&&) = delete;
-  ~ParticleBuffer();
+    ParticleBuffer() = default;
+    ParticleBuffer(unsigned int, int);
+    ParticleBuffer(ParticleBuffer&) = delete;
+    ParticleBuffer(ParticleBuffer&&) = delete;
+    ParticleBuffer& operator=(ParticleBuffer&) = delete;
+    ParticleBuffer& operator=(ParticleBuffer&&) = delete;
+    ~ParticleBuffer();
 
-  void initializeParticles();
+    void initializeParticles();
 
-  GLuint getParticleBufferID() const;
-  unsigned int getNumParticles() const;
-  
+    GLuint getParticleBufferID() const;
+    unsigned int getNumParticles() const;
+
 private:
-  GLuint       _buffID;
-  unsigned int _numParticles;
-  int          _initRadius;
-  
-  
-  void distributeParticles(Particle*);
-  void deleteParticleBuffer() noexcept;
+    void distributeParticles(Particle*);
+    void deleteParticleBuffer() noexcept;
+    GLuint _buffID = 0;
+    unsigned int _numParticles = 1000;
+    int _initRadius = 15;
 };
-
-
-#endif

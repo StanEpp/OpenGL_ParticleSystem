@@ -29,7 +29,7 @@ set(HEADER_FILES
     src/ShaderManager.hpp
     src/tga.h
     src/ParticleSystem.hpp
-    src/Timer.hpp
+    src/GLFWTimer.hpp
 )
 
 set(SHADER_FILES

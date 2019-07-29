@@ -33,7 +33,8 @@ public:
     fullscreen 1
 
     */
-    ConfigLoader(const std::string &filename) {
+    ConfigLoader(const std::string &filename)
+    {
         std::ifstream file(filename, std::ios::in);
 
         if (!file) {

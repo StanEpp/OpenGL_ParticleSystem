@@ -1,13 +1,13 @@
 ## Camera
-movementSpeed 50
-cameraSensitivity 0.25
+movementSpeed 100
+cameraSensitivity 0.5
 nearPlane 0.01
 farPlane 1000
 fovY 45
 
 ## Particles
-numParticles 100000
-particleSpawnRadius 16
+numParticles 10000
+particleSpawnRadius 15
 sizeOfParticle 0.01
 
 ## Window

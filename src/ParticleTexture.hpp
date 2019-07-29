@@ -1,32 +1,23 @@
-#ifndef _PARTICLETEXTURE_
-#define _PARTICLETEXTURE_
+#pragma once
 
-#ifndef _GL3W_
-#define _GL3W_
-	#include <GL/gl3w.h>
-	#include <GLFW/glfw3.h>
-#endif
+#include <GL/gl3w.h>
+#include <string>
 
-#include <stdexcept>
-#include "tga.h"
-
-class ParticleTexture{
-private:
-  GLuint _textureID;
-
-  void deleteTexture() noexcept;
-
+class ParticleTexture
+{
 public:
-  ParticleTexture();
-  ParticleTexture(ParticleTexture&) = delete;
-  ParticleTexture(ParticleTexture&&) = delete;
-  ParticleTexture& operator=(ParticleTexture&) = delete;
-  ParticleTexture& operator=(ParticleTexture&&) = delete;
-  ~ParticleTexture();
+    ParticleTexture() = default;
+    ParticleTexture(ParticleTexture&) = delete;
+    ParticleTexture(ParticleTexture&&) = delete;
+    ParticleTexture& operator=(ParticleTexture&) = delete;
+    ParticleTexture& operator=(ParticleTexture&&) = delete;
+    ~ParticleTexture();
 
-  void loadTexture(const std::string& path);
-  void useTexture(GLuint shaderProgramID);
+    void loadTexture(const std::string& path);
+    void useTexture(GLuint shaderProgramID);
 
+private:
+    void deleteTexture() noexcept;
+
+    GLuint _textureID = 0;
 };
-
-#endif

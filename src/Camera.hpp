@@ -16,9 +16,9 @@ public:
       m_height(height),
       m_sensitivity(sensitivity),
       m_movementSpeed(movementSpeed),
-      m_pos(pos),
       m_nearPlane(nearPlane),
-      m_farPlane(farPlane)
+      m_farPlane(farPlane),
+      m_pos(pos)
   {
     m_lookDir = glm::normalize(lookAt - pos);
     m_right = glm::normalize(glm::cross(up, m_lookDir));

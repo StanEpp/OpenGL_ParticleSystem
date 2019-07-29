@@ -16,7 +16,7 @@ public:
         m_fullscreen(fullscreen)
     {
         initialize();
-        setVSync(false);
+        setVSync(m_vsync);
     }
 
     ~GLFWWindow()
@@ -33,7 +33,8 @@ public:
         return m_window;
     }
 
-    void swapBuffers(){
+    void swapBuffers()
+    {
         glfwSwapBuffers(m_window);
     }
 
@@ -49,8 +50,11 @@ public:
 
     void setVSync(bool enable)
     {
+        m_vsync = enable;
         glfwSwapInterval( enable?1:0);
     }
+
+    bool vsync() const { return m_vsync; }
 
 private:
 
@@ -92,5 +96,6 @@ private:
     int m_height = 720;
     std::string	m_windowName;
     bool m_fullscreen = false;
+    bool m_vsync = true;
     GLFWwindow*	m_window = nullptr;
 };
